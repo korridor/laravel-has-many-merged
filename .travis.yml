@@ -1,0 +1,44 @@
+cache:
+    directories:
+        - $HOME/.composer/cache
+
+language: php
+
+matrix:
+    include:
+        # Laravel 6.*
+        -   php: 7.2
+            env: LARAVEL='6.*' COMPOSER_FLAGS='--prefer-stable'
+        -   php: 7.3
+            env: LARAVEL='6.*' COMPOSER_FLAGS='--prefer-stable'
+        # Laravel 7.*
+        -   php: 7.2
+            env: LARAVEL='7.*' COMPOSER_FLAGS='--prefer-stable'
+        -   php: 7.3
+            env: LARAVEL='7.*' COMPOSER_FLAGS='--prefer-stable'
+        -   php: 7.4
+            env: LARAVEL='7.*' COMPOSER_FLAGS='--prefer-stable'
+        # Laravel 8.*
+        -   php: 7.3
+            env: LARAVEL='8.*' COMPOSER_FLAGS='--prefer-stable'
+        -   php: 7.4
+            env: LARAVEL='8.*' COMPOSER_FLAGS='--prefer-stable'
+        -   php: 8.0
+            env: LARAVEL='8.*' COMPOSER_FLAGS='--prefer-stable'
+    fast_finish: true
+
+before_install:
+    - travis_retry composer self-update
+    - travis_retry composer require "illuminate/database:${LARAVEL}" --no-interaction --no-update
+
+install:
+    - travis_retry composer update ${COMPOSER_FLAGS} --prefer-dist --no-interaction --no-suggest
+
+before_script:
+    - composer config discard-changes true
+
+script:
+    - XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml
+
+after_success:
+    - bash <(curl -s https://codecov.io/bash)
