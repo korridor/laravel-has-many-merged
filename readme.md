@@ -21,7 +21,8 @@ composer require korridor/laravel-has-many-merged
 
 This package is tested for the following Laravel versions:
 
-- 8.* (PHP 7.3, 7.4, 8.0)
+- 9.* (PHP 8.0, 8.1)
+- 8.* (PHP 7.3, 7.4, 8.0, 8.1)
 - 7.* (PHP 7.2, 7.3, 7.4)
 - 6.* (PHP 7.2, 7.3)
 
