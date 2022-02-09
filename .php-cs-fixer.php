@@ -1,6 +1,6 @@
 <?php
 
-return PhpCsFixer\Config::create()
+return (new PhpCsFixer\Config())
     ->setRiskyAllowed(false)
     ->setRules([
         '@PSR2' => true,

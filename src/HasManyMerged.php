@@ -26,10 +26,10 @@ class HasManyMerged extends Relation
     /**
      * Create a new has one or many relationship instance.
      *
-     * @param Builder $query
-     * @param Model $parent
-     * @param array $foreignKeys
-     * @param string $localKey
+     * @param  Builder  $query
+     * @param  Model  $parent
+     * @param  array  $foreignKeys
+     * @param  string  $localKey
      * @return void
      */
     public function __construct(Builder $query, Model $parent, array $foreignKeys, string $localKey)
@@ -77,7 +77,7 @@ class HasManyMerged extends Relation
      * Set the constraints for an eager load of the relation.
      * Note: Used to load relations of multiple models at once.
      *
-     * @param array $models
+     * @param  array  $models
      */
     public function addEagerConstraints(array $models)
     {
@@ -95,8 +95,8 @@ class HasManyMerged extends Relation
      * Get the name of the "where in" method for eager loading.
      * Note: Similar to whereInMethod of Relation class.
      *
-     * @param Model $model
-     * @param string $key
+     * @param  Model  $model
+     * @param  string  $key
      * @return string
      */
     protected function orWhereInMethod(Model $model, string $key): string
@@ -128,9 +128,9 @@ class HasManyMerged extends Relation
      * Match the eagerly loaded results to their parents.
      * Info: From HasMany class.
      *
-     * @param array $models
-     * @param Collection $results
-     * @param string $relation
+     * @param  array  $models
+     * @param  Collection  $results
+     * @param  string  $relation
      * @return array
      */
     public function match(array $models, Collection $results, $relation)
@@ -156,7 +156,7 @@ class HasManyMerged extends Relation
      * Build model dictionary keyed by the relation's foreign key.
      * Note: Custom code.
      *
-     * @param Collection $results
+     * @param  Collection  $results
      * @return array
      */
     protected function buildDictionary(Collection $results): array
@@ -215,7 +215,7 @@ class HasManyMerged extends Relation
     /**
      * Execute the query as a "select" statement.
      *
-     * @param array $columns
+     * @param  array  $columns
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function get($columns = ['*'])

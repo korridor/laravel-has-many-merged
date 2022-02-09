@@ -5,9 +5,9 @@ namespace Korridor\LaravelHasManyMerged;
 trait HasManyMergedRelation
 {
     /**
-     * @param string $related
-     * @param string[]|null $foreignKeys
-     * @param string|null $localKey
+     * @param  string  $related
+     * @param  string[]|null  $foreignKeys
+     * @param  string|null  $localKey
      * @return HasManyMerged
      */
     public function hasManyMerged(string $related, ?array $foreignKeys = null, ?string $localKey = null): HasManyMerged
