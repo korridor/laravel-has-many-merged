@@ -34,6 +34,7 @@ abstract class TestCase extends PHPUnitTestCase
         $this->db::schema()->create('messages', function (Blueprint $table) {
             $table->increments('id');
             $table->text('content');
+            $table->integer('content_integer')->default(0);
             $table->unsignedInteger('sender_user_id');
             $table->unsignedInteger('receiver_user_id');
             $table->timestamps();

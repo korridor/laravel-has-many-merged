@@ -74,6 +74,16 @@ class HasManyMerged extends Relation
     }
 
     /**
+     * Get the fully qualified parent key name.
+     *
+     * @return string
+     */
+    public function getQualifiedParentKeyName()
+    {
+        return $this->parent->qualifyColumn($this->localKey);
+    }
+
+    /**
      * Set the constraints for an eager load of the relation.
      * Note: Used to load relations of multiple models at once.
      *
@@ -87,6 +97,30 @@ class HasManyMerged extends Relation
         $this->query->where(function ($query) use ($foreignKeys, $models, $orWhereIn) {
             foreach ($foreignKeys as $foreignKey) {
                 $query->{$orWhereIn}($foreignKey, $this->getKeys($models, $this->localKey));
+            }
+        });
+    }
+
+    /**
+     * Add the constraints for an internal relationship existence query.
+     *
+     * Essentially, these queries compare on column names like whereColumn.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \Illuminate\Database\Eloquent\Builder  $parentQuery
+     * @param  array|mixed  $columns
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
+    {
+        $foreignKeys = $this->foreignKeys;
+
+        return $query->select($columns)->where(function ($query) use ($foreignKeys) {
+            foreach ($foreignKeys as $foreignKey) {
+                $query->orWhere(function ($query) use ($foreignKey) {
+                    $query->whereColumn($this->getQualifiedParentKeyName(), '=', $foreignKey)
+                        ->whereNotNull($foreignKey);
+                });
             }
         });
     }
