@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Korridor\LaravelHasManyMerged\Tests;
 
 use Illuminate\Database\Capsule\Manager;
@@ -23,7 +25,7 @@ abstract class TestCase extends PHPUnitTestCase
         $this->db->setAsGlobal();
         $this->db->bootEloquent();
 
-        $this->db::schema()->create('users', function (Blueprint $table) {
+        $this->db::schema()->create('users', function (Blueprint $table): void {
             $table->increments('id');
             $table->unsignedInteger('other_unique_id')->unique();
             $table->string('name');
@@ -31,7 +33,7 @@ abstract class TestCase extends PHPUnitTestCase
             $table->softDeletes();
         });
 
-        $this->db::schema()->create('messages', function (Blueprint $table) {
+        $this->db::schema()->create('messages', function (Blueprint $table): void {
             $table->increments('id');
             $table->text('content');
             $table->integer('content_integer')->default(0);

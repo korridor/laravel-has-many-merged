@@ -1,7 +1,10 @@
 <?xml version="1.0"?>
 <ruleset name="ASH2">
     <description>The ASH2 coding standard.</description>
-    <rule ref="PSR2">
+    <rule ref="PSR12">
+        <properties>
+            <property name="lineLimit" value="150"/>
+        </properties>
     </rule>
 
     <file>src/</file>

@@ -1,13 +1,9 @@
-FROM php:7.4-cli
+FROM php:8.1-cli
 
-RUN apt-get update && apt-get install -y \
-    zlib1g-dev \
-    libzip-dev
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
-RUN docker-php-ext-install zip
-
-RUN pecl install xdebug-2.8.1 \
-    && docker-php-ext-enable xdebug
+RUN chmod +x /usr/local/bin/install-php-extensions && \
+    install-php-extensions zip xdebug
 
 # Install composer and add its bin to the PATH.
 RUN curl -s http://getcomposer.org/installer | php && \

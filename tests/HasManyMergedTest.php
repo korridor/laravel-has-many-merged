@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Korridor\LaravelHasManyMerged\Tests;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -11,39 +13,39 @@ class HasManyMergedTest extends TestCase
 {
     private function createTwoUsersWereBothAreSenderOrReceiverOfTheSameFourMessages(): void
     {
-        User::create([
+        User::query()->create([
             'id' => 11,
             'other_unique_id' => 1,
             'name' => 'Tester 1',
         ]);
-        User::create([
+        User::query()->create([
             'id' => 12,
             'other_unique_id' => 2,
             'name' => 'Tester 2',
         ]);
 
-        Message::create([
+        Message::query()->create([
             'id' => 1,
             'content' => 'A - This is a message!',
             'sender_user_id' => 1,
             'receiver_user_id' => 1,
             'content_integer' => 1,
         ]);
-        Message::create([
+        Message::query()->create([
             'id' => 2,
             'content' => 'B - This is a message!',
             'sender_user_id' => 1,
             'receiver_user_id' => 2,
             'content_integer' => 1,
         ]);
-        Message::create([
+        Message::query()->create([
             'id' => 3,
             'content' => 'C - This is a message!',
             'sender_user_id' => 2,
             'receiver_user_id' => 1,
             'content_integer' => 1,
         ]);
-        Message::create([
+        Message::query()->create([
             'id' => 4,
             'content' => 'D - This is a message!',
             'sender_user_id' => 2,
@@ -166,7 +168,7 @@ class HasManyMergedTest extends TestCase
 
         // Act
         $this->db::connection()->enableQueryLog();
-        $users = User::with(['messages'])->whereHas('messages', function (Builder $builder) {
+        $users = User::with(['messages'])->whereHas('messages', function (Builder $builder): void {
             $builder->where('content_integer', '=', 2);
         })->get();
         $queries = $this->db::getQueryLog();
@@ -211,7 +213,7 @@ class HasManyMergedTest extends TestCase
         // Act
         $this->db::connection()->enableQueryLog();
         $users = User::with([
-            'messages' => function (HasManyMerged $builder) {
+            'messages' => function (HasManyMerged $builder): void {
                 $builder->where('content', 'like', 'A -%');
             },
         ])->get();
@@ -240,7 +242,7 @@ class HasManyMergedTest extends TestCase
         // Act
         $this->db::connection()->enableQueryLog();
         $users = User::with([
-            'messages' => function (HasManyMerged $builder) {
+            'messages' => function (HasManyMerged $builder): void {
                 $builder->orderBy('id', 'desc');
             },
         ])->get();
