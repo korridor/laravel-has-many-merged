@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Korridor\LaravelHasManyMerged\Tests\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -24,17 +26,17 @@ class Message extends Model
     ];
 
     /**
-     * @return BelongsTo|User
+     * @return BelongsTo<User>
      */
-    public function sender()
+    public function sender(): BelongsTo
     {
         return $this->belongsTo(User::class, 'sender_user_id');
     }
 
     /**
-     * @return BelongsTo|User
+     * @return BelongsTo<User>
      */
-    public function receiver()
+    public function receiver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'receiver_user_id');
     }

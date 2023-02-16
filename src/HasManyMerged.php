@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Korridor\LaravelHasManyMerged;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -46,14 +48,14 @@ class HasManyMerged extends Relation
      *
      * @return void
      */
-    public function addConstraints()
+    public function addConstraints(): void
     {
         if (static::$constraints) {
             $foreignKeys = $this->foreignKeys;
 
-            $this->query->where(function ($query) use ($foreignKeys) {
+            $this->query->where(function ($query) use ($foreignKeys): void {
                 foreach ($foreignKeys as $foreignKey) {
-                    $query->orWhere(function ($query) use ($foreignKey) {
+                    $query->orWhere(function ($query) use ($foreignKey): void {
                         $query->where($foreignKey, '=', $this->getParentKey())
                             ->whereNotNull($foreignKey);
                     });
@@ -89,12 +91,12 @@ class HasManyMerged extends Relation
      *
      * @param  array  $models
      */
-    public function addEagerConstraints(array $models)
+    public function addEagerConstraints(array $models): void
     {
         $foreignKeys = $this->foreignKeys;
         $orWhereIn = $this->orWhereInMethod($this->parent, $this->localKey);
 
-        $this->query->where(function ($query) use ($foreignKeys, $models, $orWhereIn) {
+        $this->query->where(function ($query) use ($foreignKeys, $models, $orWhereIn): void {
             foreach ($foreignKeys as $foreignKey) {
                 $query->{$orWhereIn}($foreignKey, $this->getKeys($models, $this->localKey));
             }
@@ -115,9 +117,9 @@ class HasManyMerged extends Relation
     {
         $foreignKeys = $this->foreignKeys;
 
-        return $query->select($columns)->where(function ($query) use ($foreignKeys) {
+        return $query->select($columns)->where(function ($query) use ($foreignKeys): void {
             foreach ($foreignKeys as $foreignKey) {
-                $query->orWhere(function ($query) use ($foreignKey) {
+                $query->orWhere(function ($query) use ($foreignKey): void {
                     $query->whereColumn($this->getQualifiedParentKeyName(), '=', $foreignKey)
                         ->whereNotNull($foreignKey);
                 });

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Korridor\LaravelHasManyMerged;
 
 trait HasManyMergedRelation
@@ -17,7 +19,7 @@ trait HasManyMergedRelation
         $localKey = $localKey ?: $this->getKeyName();
 
         $foreignKeys = array_map(function ($foreignKey) use ($instance) {
-            return $instance->getTable().'.'.$foreignKey;
+            return $instance->getTable() . '.' . $foreignKey;
         }, $foreignKeys);
 
         return new HasManyMerged($instance->newQuery(), $this, $foreignKeys, $localKey);

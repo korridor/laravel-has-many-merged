@@ -1,0 +1,46 @@
+name: Unit Test
+
+on: [ push ]
+
+jobs:
+  PHPUnit:
+    strategy:
+      matrix:
+        include:
+            # Laravel 10.*
+            -   php: 8.1
+                laravel: 10.*
+                composer-flag: '--prefer-stable'
+            -   php: 8.2
+                laravel: 10.*
+                composer-flag: '--prefer-stable'
+            -   php: 8.1
+                laravel: 10.*
+                composer-flag: '--prefer-lowest'
+            -   php: 8.2
+                laravel: 10.*
+                composer-flag: '--prefer-lowest'
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+            php-version: ${{ matrix.php }}
+            extensions: curl, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, iconv
+            coverage: xdebug
+
+      - name: Install dependencies
+        run: composer require "laravel/framework:${{ matrix.laravel }}" --no-interaction --no-update
+
+      - name: Update dependencies
+        run: composer update ${{ matrix.composer-flag }} --prefer-dist --no-interaction
+
+      - name: Run PHPUnit
+        run: XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3

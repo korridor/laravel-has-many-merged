@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Korridor\LaravelHasManyMerged\Tests\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -30,25 +32,25 @@ class User extends Model
     ];
 
     /**
-     * @return HasManyMerged|Message
+     * @return HasManyMerged<Message>
      */
-    public function messages()
+    public function messages(): HasManyMerged
     {
         return $this->hasManyMerged(Message::class, ['sender_user_id', 'receiver_user_id'], 'other_unique_id');
     }
 
     /**
-     * @return HasMany|Message
+     * @return HasMany<Message>
      */
-    public function sentMessages()
+    public function sentMessages(): HasMany
     {
         return $this->hasMany(Message::class, 'sender_user_id', 'other_unique_id');
     }
 
     /**
-     * @return HasMany|Message
+     * @return HasMany<Message>
      */
-    public function receivedMessages()
+    public function receivedMessages(): HasMany
     {
         return $this->hasMany(Message::class, 'receiver_user_id', 'other_unique_id');
     }
