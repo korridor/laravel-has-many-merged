@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @template TRelatedModel of Model
  * @extends HasOneOrManyMerged<TRelatedModel>
  */
-class HasManyMerged extends HasOneOrManyMerged
+class HasOneMerged extends HasOneOrManyMerged
 {
     /**
      * Create a new has one or many relationship instance.
@@ -32,43 +32,6 @@ class HasManyMerged extends HasOneOrManyMerged
     }
 
     /**
-     * Get the key value of the parent's local key.
-     * Info: From HasOneOrMany class.
-     *
-     * @return mixed
-     */
-    public function getParentKey()
-    {
-        return $this->parent->getAttribute($this->localKey);
-    }
-
-    /**
-     * Get the fully qualified parent key name.
-     *
-     * @return string
-     */
-    public function getQualifiedParentKeyName()
-    {
-        return $this->parent->qualifyColumn($this->localKey);
-    }
-
-    /**
-     * Get the name of the "where in" method for eager loading.
-     * Note: Similar to whereInMethod of Relation class.
-     *
-     * @param  Model  $model
-     * @param  string  $key
-     * @return string
-     */
-    protected function orWhereInMethod(Model $model, string $key): string
-    {
-        return $model->getKeyName() === last(explode('.', $key))
-        && in_array($model->getKeyType(), ['int', 'integer'])
-            ? 'orWhereIntegerInRaw'
-            : 'orWhereIn';
-    }
-
-    /**
      * Initialize the relation on a set of models.
      *
      * @param  array  $models
@@ -77,6 +40,8 @@ class HasManyMerged extends HasOneOrManyMerged
      */
     public function initRelation(array $models, $relation)
     {
+        // TODO!!!
+
         // Info: From HasMany class
         foreach ($models as $model) {
             $model->setRelation($relation, $this->related->newCollection());
@@ -105,7 +70,7 @@ class HasManyMerged extends HasOneOrManyMerged
             if (isset($dictionary[$key = $model->getAttribute($this->localKey)])) {
                 $model->setRelation(
                     $relation,
-                    $this->related->newCollection($dictionary[$key])->unique($this->related->getKeyName())
+                    reset($dictionary[$key])
                 );
             }
         }
@@ -114,12 +79,36 @@ class HasManyMerged extends HasOneOrManyMerged
     }
 
     /**
+     * Get the plain foreign key.
+     *
+     * @return string[]
+     */
+    public function getForeignKeyNames(): array
+    {
+        return array_map(function (string $qualifiedForeignKeyName) {
+            $segments = explode('.', $qualifiedForeignKeyName);
+
+            return end($segments);
+        }, $this->getQualifiedForeignKeyNames());
+    }
+
+    /**
+     * Get the foreign key for the relationship.
+     *
+     * @return string[]
+     */
+    public function getQualifiedForeignKeyNames(): array
+    {
+        return $this->foreignKeys;
+    }
+
+    /**
      * Get the results of the relationship.
      *
-     * @phpstan-return \Traversable<int, TRelatedModel>
+     * @phpstan-return ?TRelatedModel
      */
     public function getResults()
     {
-        return $this->get();
+        return $this->first();
     }
 }

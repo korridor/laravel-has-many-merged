@@ -16,8 +16,10 @@
     "illuminate/database": "^10"
   },
   "require-dev": {
-    "phpunit/phpunit": "^10",
     "friendsofphp/php-cs-fixer": "^3",
+    "nunomaduro/larastan": "^2.0",
+    "orchestra/testbench": "^8.9",
+    "phpunit/phpunit": "^10",
     "squizlabs/php_codesniffer": "^3.5"
   },
   "autoload": {
@@ -31,10 +33,13 @@
     }
   },
   "scripts": {
-    "test": "vendor/bin/phpunit",
-    "test-coverage": "vendor/bin/phpunit --coverage-html coverage",
-    "fix": "./vendor/bin/php-cs-fixer fix",
-    "lint": "./vendor/bin/phpcs --error-severity=1 --warning-severity=8 --extensions=php"
+    "test": "@php vendor/bin/phpunit",
+    "test-coverage": "@php vendor/bin/phpunit --coverage-html coverage",
+    "fix": "@php ./vendor/bin/php-cs-fixer fix",
+    "lint": "@php ./vendor/bin/phpcs --error-severity=1 --warning-severity=8 --extensions=php",
+    "analyse": [
+      "@php ./vendor/bin/phpstan analyse --memory-limit=2G"
+    ]
   },
   "config": {
     "sort-packages": true
