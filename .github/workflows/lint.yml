@@ -7,7 +7,7 @@ jobs:
     name: Lint code with PHP-CS-Fixer
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install dependencies
         uses: php-actions/composer@v6
@@ -23,7 +23,7 @@ jobs:
     name: Lint code with PHP CodeSniffer
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install dependencies
         uses: php-actions/composer@v6
