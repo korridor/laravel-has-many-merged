@@ -65,7 +65,7 @@ class HasManyMergedTest extends TestCase
         $user2 = User::find(12);
         $messagesOfUser1 = $user1->messages;
         $messagesOfUser2 = $user2->messages;
-        $queries = $this->db::getQueryLog();
+        $queries = $this->db::connection()->getQueryLog();
         $this->db::connection()->disableQueryLog();
 
         // Assert
@@ -90,7 +90,7 @@ class HasManyMergedTest extends TestCase
         $user2 = $users->firstWhere('id', 12);
         $messagesOfUser1 = $user1->messages;
         $messagesOfUser2 = $user2->messages;
-        $queries = $this->db::getQueryLog();
+        $queries = $this->db::connection()->getQueryLog();
         $this->db::connection()->disableQueryLog();
 
         // Assert
@@ -115,7 +115,7 @@ class HasManyMergedTest extends TestCase
         $user2 = $users->firstWhere('id', 12);
         $messagesOfUser1 = $user1->messages;
         $messagesOfUser2 = $user2->messages;
-        $queries = $this->db::getQueryLog();
+        $queries = $this->db::connection()->getQueryLog();
         $this->db::connection()->disableQueryLog();
 
         // Assert
@@ -146,7 +146,7 @@ class HasManyMergedTest extends TestCase
         $user2 = $users->firstWhere('id', 12);
         $messagesOfUser1 = $user1->messages;
         $messagesOfUser2 = $user2->messages;
-        $queries = $this->db::getQueryLog();
+        $queries = $this->db::connection()->getQueryLog();
         $this->db::connection()->disableQueryLog();
 
         // Assert
@@ -171,7 +171,7 @@ class HasManyMergedTest extends TestCase
         $users = User::with(['messages'])->whereHas('messages', function (Builder $builder): void {
             $builder->where('content_integer', '=', 2);
         })->get();
-        $queries = $this->db::getQueryLog();
+        $queries = $this->db::connection()->getQueryLog();
         $this->db::connection()->disableQueryLog();
 
         // Assert
@@ -192,7 +192,7 @@ class HasManyMergedTest extends TestCase
         $user2 = $users->firstWhere('id', 12);
         $messagesOfUser1 = $user1->messages;
         $messagesOfUser2 = $user2->messages;
-        $queries = $this->db::getQueryLog();
+        $queries = $this->db::connection()->getQueryLog();
         $this->db::connection()->disableQueryLog();
 
         // Assert
@@ -221,7 +221,7 @@ class HasManyMergedTest extends TestCase
         $user2 = $users->firstWhere('id', 12);
         $messagesOfUser1 = $user1->messages;
         $messagesOfUser2 = $user2->messages;
-        $queries = $this->db::getQueryLog();
+        $queries = $this->db::connection()->getQueryLog();
         $this->db::connection()->disableQueryLog();
 
         // Assert
@@ -250,7 +250,7 @@ class HasManyMergedTest extends TestCase
         $user2 = $users->firstWhere('id', 12);
         $messagesOfUser1 = $user1->messages;
         $messagesOfUser2 = $user2->messages;
-        $queries = $this->db::getQueryLog();
+        $queries = $this->db::connection()->getQueryLog();
         $this->db::connection()->disableQueryLog();
 
         // Assert

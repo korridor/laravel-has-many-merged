@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Korridor\LaravelHasManyMerged\HasManyMergedRelation;
 
+/**
+ * @property int $id
+ */
 class Message extends Model
 {
     use HasManyMergedRelation;
@@ -26,7 +29,7 @@ class Message extends Model
     ];
 
     /**
-     * @return BelongsTo<User>
+     * @return BelongsTo<User, Message>
      */
     public function sender(): BelongsTo
     {
@@ -34,7 +37,7 @@ class Message extends Model
     }
 
     /**
-     * @return BelongsTo<User>
+     * @return BelongsTo<User, Message>
      */
     public function receiver(): BelongsTo
     {

@@ -48,7 +48,7 @@ class User extends Model
     // ...
 
     /**
-     * @return HasManyMerged|Message
+     * @return HasManyMerged<Message>
      */
     public function messages(): HasManyMerged
     {
@@ -56,7 +56,7 @@ class User extends Model
     }
 
     /**
-     * @return HasMany|Message
+     * @return HasMany<Message>
      */
     public function sentMessages(): HasMany
     {
@@ -64,7 +64,7 @@ class User extends Model
     }
 
     /**
-     * @return HasMany|Message
+     * @return HasMany<Message>
      */
     public function receivedMessages(): HasMany
     {

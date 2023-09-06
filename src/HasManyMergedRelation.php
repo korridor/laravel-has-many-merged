@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Korridor\LaravelHasManyMerged;
 
+use Illuminate\Database\Eloquent\Model;
+
 trait HasManyMergedRelation
 {
     /**
-     * @param  string  $related
+     * @param  class-string  $related
      * @param  string[]|null  $foreignKeys
      * @param  string|null  $localKey
      * @return HasManyMerged
