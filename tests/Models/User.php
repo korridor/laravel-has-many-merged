@@ -9,6 +9,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Korridor\LaravelHasManyMerged\HasManyMerged;
 use Korridor\LaravelHasManyMerged\HasManyMergedRelation;
 
+/**
+ * @property int $id
+ * @property int $other_unique_id
+ * @property string $name
+ * @property int $messages_sum_content_integer
+ * @property int $messages_count
+ */
 class User extends Model
 {
     use HasManyMergedRelation;

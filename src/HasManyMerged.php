@@ -9,6 +9,10 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
+/**
+ * @template TRelatedModel of Model
+ * @extends Relation<TRelatedModel>
+ */
 class HasManyMerged extends Relation
 {
     /**
@@ -28,9 +32,9 @@ class HasManyMerged extends Relation
     /**
      * Create a new has one or many relationship instance.
      *
-     * @param  Builder  $query
+     * @param  Builder<TRelatedModel>  $query
      * @param  Model  $parent
-     * @param  array  $foreignKeys
+     * @param  string[]  $foreignKeys
      * @param  string  $localKey
      * @return void
      */
@@ -241,7 +245,7 @@ class HasManyMerged extends Relation
     /**
      * Get the results of the relationship.
      *
-     * @return mixed
+     * @phpstan-return \Traversable<int, TRelatedModel>
      */
     public function getResults()
     {
@@ -251,8 +255,8 @@ class HasManyMerged extends Relation
     /**
      * Execute the query as a "select" statement.
      *
-     * @param  array  $columns
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param  string[]  $columns
+     * @return Collection<int, TRelatedModel>
      */
     public function get($columns = ['*'])
     {
