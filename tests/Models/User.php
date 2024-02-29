@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Korridor\LaravelHasManyMerged\Tests\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Korridor\LaravelHasManyMerged\HasManyMerged;
@@ -15,6 +16,7 @@ use Korridor\LaravelHasManyMerged\HasManyMergedRelation;
  * @property string $name
  * @property int $messages_sum_content_integer
  * @property int $messages_count
+ * @property-read Collection<int, Message> $messages
  */
 class User extends Model
 {
@@ -30,7 +32,7 @@ class User extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var string[]
+     * @var array<int, string>
      */
     protected $fillable = [
         'id',
