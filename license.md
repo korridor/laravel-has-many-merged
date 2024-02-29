@@ -1,7 +1,7 @@
 The MIT License (MIT)
 =====================
 
-Copyright © `2021` `korridor`
+Copyright © `2024` `korridor`
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation

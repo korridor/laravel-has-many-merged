@@ -61,8 +61,10 @@ class HasManyMergedTest extends TestCase
 
         // Act
         $this->db::connection()->enableQueryLog();
-        $user1 = User::find(11);
-        $user2 = User::find(12);
+        /** @var User|null $user1 */
+        $user1 = User::query()->find(11);
+        /** @var User|null $user2 */
+        $user2 = User::query()->find(12);
         $messagesOfUser1 = $user1->messages;
         $messagesOfUser2 = $user2->messages;
         $queries = $this->db::connection()->getQueryLog();
@@ -177,6 +179,7 @@ class HasManyMergedTest extends TestCase
         // Assert
         $this->assertEquals(1, count($users));
         $this->assertEquals(2, $users->first()->other_unique_id);
+        $this->assertCount(2, $queries);
     }
 
     public function testHasManyMergedWithTwoUsersWereBothAreSenderOrReceiverOfTheSameFourMessagesWithLazyEagerLoading(): void

@@ -10,15 +10,14 @@
       "email": "26689068+korridor@users.noreply.github.com"
     }
   ],
-  "minimum-stability": "stable",
   "require": {
     "php": ">=8.1",
-    "illuminate/database": "^10"
+    "illuminate/database": "^10|^11"
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^3",
     "nunomaduro/larastan": "^2.0",
-    "orchestra/testbench": "^8.9",
+    "orchestra/testbench": "^8|^9",
     "phpunit/phpunit": "^10",
     "squizlabs/php_codesniffer": "^3.5"
   },
@@ -43,5 +42,7 @@
   },
   "config": {
     "sort-packages": true
-  }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
 }
