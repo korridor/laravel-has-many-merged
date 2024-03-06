@@ -9,6 +9,9 @@
 Custom relationship for Eloquent that merges/combines multiple one-to-may (hasMany) relationships.
 This relation fully supports lazy and eager loading.
 
+> [!NOTE]
+> Check out **solidtime - The modern Open Source Time-Tracker** at [solidtime.io](https://www.solidtime.io)
+
 ## Installation
 
 You can install the package via composer with following command:
