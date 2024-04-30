@@ -1,4 +1,4 @@
-# Laravel has many merged
+# Laravel HasManyMerged
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/korridor/laravel-has-many-merged?style=flat-square)](https://packagist.org/packages/korridor/laravel-has-many-merged)
 [![License](https://img.shields.io/packagist/l/korridor/laravel-has-many-merged?style=flat-square)](license.md)
@@ -6,7 +6,7 @@
 [![GitHub Workflow Tests](https://img.shields.io/github/actions/workflow/status/korridor/laravel-has-many-merged/unittests.yml?label=tests&style=flat-square)](https://github.com/korridor/laravel-has-many-merged/actions/workflows/unittests.yml)
 [![Codecov](https://img.shields.io/codecov/c/github/korridor/laravel-has-many-merged?style=flat-square)](https://codecov.io/gh/korridor/laravel-has-many-merged)
 
-Custom relationship for Eloquent that merges/combines multiple one-to-may (hasMany) relationships.
+Custom relationship for Eloquent that merges/combines multiple [One-to-Many (HasMany)](https://laravel.com/docs/11.x/eloquent-relationships#one-to-many) relationships.
 This relation fully supports lazy and eager loading.
 
 > [!NOTE]
