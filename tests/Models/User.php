@@ -32,7 +32,7 @@ class User extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'id',
@@ -41,7 +41,7 @@ class User extends Model
     ];
 
     /**
-     * @return HasManyMerged<Message>
+     * @return HasManyMerged<Message, $this>
      */
     public function messages(): HasManyMerged
     {
@@ -49,7 +49,7 @@ class User extends Model
     }
 
     /**
-     * @return HasMany<Message>
+     * @return HasMany<Message, $this>
      */
     public function sentMessages(): HasMany
     {
@@ -57,7 +57,7 @@ class User extends Model
     }
 
     /**
-     * @return HasMany<Message>
+     * @return HasMany<Message, $this>
      */
     public function receivedMessages(): HasMany
     {

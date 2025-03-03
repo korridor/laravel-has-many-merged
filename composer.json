@@ -12,13 +12,13 @@
   ],
   "require": {
     "php": ">=8.1",
-    "illuminate/database": "^10|^11"
+    "illuminate/database": "^10|^11|^12"
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^3",
-    "nunomaduro/larastan": "^2.0",
-    "orchestra/testbench": "^8|^9",
-    "phpunit/phpunit": "^10",
+    "nunomaduro/larastan": "^2.0|^3",
+    "orchestra/testbench": "^8|^9|^10",
+    "phpunit/phpunit": "^10|^11",
     "squizlabs/php_codesniffer": "^3.5"
   },
   "autoload": {

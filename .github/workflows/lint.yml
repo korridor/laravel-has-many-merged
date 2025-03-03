@@ -4,33 +4,35 @@ on: [ push ]
 
 jobs:
   lint_with_php_cs_fixer:
-    name: Lint code with PHP-CS-Fixer
+    name: "Lint code with PHP-CS-Fixer"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: "Checkout"
+        uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: "Install dependencies"
         uses: php-actions/composer@v6
         with:
           command: install
           only_args: -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --ignore-platform-reqs
           php_version: 8.3
 
-      - name: Run PHP-CS-Fixer
+      - name: "Run PHP-CS-Fixer"
         run: vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.php --diff --dry-run
 
   lint_with_phpcs:
-    name: Lint code with PHP CodeSniffer
+    name: "Lint code with PHP CodeSniffer"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: "Checkout"
+        uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: "Install dependencies"
         uses: php-actions/composer@v6
         with:
           command: install
           only_args: -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --ignore-platform-reqs
           php_version: 8.3
 
-      - name: Run PHP CodeSniffer
+      - name: "Run PHP CodeSniffer"
         run: vendor/bin/phpcs --extensions=php

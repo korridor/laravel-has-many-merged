@@ -18,7 +18,7 @@ class Message extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'id',
@@ -29,7 +29,7 @@ class Message extends Model
     ];
 
     /**
-     * @return BelongsTo<User, Message>
+     * @return BelongsTo<User, $this>
      */
     public function sender(): BelongsTo
     {
@@ -37,7 +37,7 @@ class Message extends Model
     }
 
     /**
-     * @return BelongsTo<User, Message>
+     * @return BelongsTo<User, $this>
      */
     public function receiver(): BelongsTo
     {
