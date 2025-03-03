@@ -11,7 +11,8 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
  * @template TRelatedModel of Model
- * @extends Relation<TRelatedModel>
+ * @template TDeclaringModel of Model
+ * @extends Relation<TRelatedModel, TDeclaringModel, Collection<int, TRelatedModel>>
  */
 class HasManyMerged extends Relation
 {

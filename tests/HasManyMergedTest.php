@@ -134,10 +134,6 @@ class HasManyMergedTest extends TestCase
 
     public function testHasManyMergedWithTwoUsersWereBothAreSenderOrReceiverOfTheSameFourMessagesWithEagerLoadingWithSum(): void
     {
-        if (! method_exists(Builder::class, 'withSum')) {
-            $this->markTestSkipped('withSum is not supported');
-        }
-
         // Arrange
         $this->createTwoUsersWereBothAreSenderOrReceiverOfTheSameFourMessages();
 
