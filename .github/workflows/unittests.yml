@@ -10,70 +10,107 @@ jobs:
             # Laravel 10.*
             -   php: 8.1
                 laravel: 10.*
+                testbench: 8.*
                 composer-flag: '--prefer-stable'
                 phpunit-config: 'phpunit-10.xml'
             -   php: 8.2
                 laravel: 10.*
+                testbench: 8.*
                 composer-flag: '--prefer-stable'
                 phpunit-config: 'phpunit-10.xml'
             -   php: 8.3
                 laravel: 10.*
+                testbench: 8.*
                 composer-flag: '--prefer-stable'
                 phpunit-config: 'phpunit-10.xml'
             -   php: 8.1
                 laravel: 10.*
+                testbench: 8.*
                 composer-flag: '--prefer-lowest'
                 phpunit-config: 'phpunit-10.xml'
             -   php: 8.2
                 laravel: 10.*
+                testbench: 8.*
                 composer-flag: '--prefer-lowest'
                 phpunit-config: 'phpunit-10.xml'
             -   php: 8.3
                 laravel: 10.*
+                testbench: 8.*
                 composer-flag: '--prefer-lowest'
                 phpunit-config: 'phpunit-10.xml'
           # Laravel 11.*
             -   php: 8.2
                 laravel: 11.*
+                testbench: 9.*
                 composer-flag: '--prefer-stable'
                 phpunit-config: 'phpunit.xml'
             -   php: 8.3
                 laravel: 11.*
+                testbench: 9.*
                 composer-flag: '--prefer-stable'
                 phpunit-config: 'phpunit.xml'
             -   php: 8.4
                 laravel: 11.*
+                testbench: 9.*
                 composer-flag: '--prefer-stable'
                 phpunit-config: 'phpunit.xml'
             -   php: 8.2
                 laravel: 11.*
+                testbench: 9.*
                 composer-flag: '--prefer-lowest'
                 phpunit-config: 'phpunit.xml'
           # Laravel 12.*
             -   php: 8.2
                 laravel: 12.*
+                testbench: 10.*
                 composer-flag: '--prefer-stable'
                 phpunit-config: 'phpunit.xml'
             -   php: 8.3
                 laravel: 12.*
+                testbench: 10.*
                 composer-flag: '--prefer-stable'
                 phpunit-config: 'phpunit.xml'
             -   php: 8.4
                 laravel: 12.*
+                testbench: 10.*
                 composer-flag: '--prefer-stable'
                 phpunit-config: 'phpunit.xml'
             -   php: 8.2
                 laravel: 12.*
+                testbench: 10.*
                 composer-flag: '--prefer-lowest'
                 phpunit-config: 'phpunit.xml'
             -   php: 8.3
                 laravel: 12.*
+                testbench: 10.*
                 composer-flag: '--prefer-lowest'
                 phpunit-config: 'phpunit.xml'
             -   php: 8.4
                 laravel: 12.*
+                testbench: 10.*
                 composer-flag: '--prefer-lowest'
                 phpunit-config: 'phpunit.xml'
+          # Laravel 13.*
+            - php: 8.3
+              laravel: 13.*
+              testbench: 11.*
+              composer-flag: '--prefer-stable'
+              phpunit-config: 'phpunit.xml'
+            - php: 8.4
+              laravel: 13.*
+              testbench: 11.*
+              composer-flag: '--prefer-stable'
+              phpunit-config: 'phpunit.xml'
+            - php: 8.3
+              laravel: 13.*
+              testbench: 11.*
+              composer-flag: '--prefer-lowest'
+              phpunit-config: 'phpunit.xml'
+            - php: 8.4
+              laravel: 13.*
+              testbench: 11.*
+              composer-flag: '--prefer-lowest'
+              phpunit-config: 'phpunit.xml'
 
     runs-on: ubuntu-latest
 
@@ -89,7 +126,7 @@ jobs:
             coverage: xdebug
 
       - name: "Install dependencies"
-        run: composer require "laravel/framework:${{ matrix.laravel }}" --no-interaction --no-update
+        run: composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
 
       - name: "Update dependencies"
         run: composer update ${{ matrix.composer-flag }} --prefer-dist --no-interaction
