@@ -8,34 +8,60 @@ jobs:
       matrix:
         include:
           # Laravel 11.*
-          -   php: 8.2
-              laravel: 11.*
-              composer-flag: '--prefer-stable'
-          -   php: 8.3
-              laravel: 11.*
-              composer-flag: '--prefer-stable'
-          -   php: 8.4
-              laravel: 11.*
-              composer-flag: '--prefer-stable'
+          - php: 8.2
+            laravel: 11.*
+            testbench: 9.*
+            composer-flag: '--prefer-stable'
+          - php: 8.3
+            laravel: 11.*
+            testbench: 9.*
+            composer-flag: '--prefer-stable'
+          - php: 8.4
+            laravel: 11.*
+            testbench: 9.*
+            composer-flag: '--prefer-stable'
           # Laravel 12.*
-          -   php: 8.2
-              laravel: 12.*
-              composer-flag: '--prefer-stable'
-          -   php: 8.3
-              laravel: 12.*
-              composer-flag: '--prefer-stable'
-          -   php: 8.4
-              laravel: 12.*
-              composer-flag: '--prefer-stable'
-          -   php: 8.2
-              laravel: 12.*
-              composer-flag: '--prefer-lowest'
-          -   php: 8.3
-              laravel: 12.*
-              composer-flag: '--prefer-lowest'
-          -   php: 8.4
-              laravel: 12.*
-              composer-flag: '--prefer-lowest'
+          - php: 8.2
+            laravel: 12.*
+            testbench: 10.*
+            composer-flag: '--prefer-stable'
+          - php: 8.3
+            laravel: 12.*
+            testbench: 10.*
+            composer-flag: '--prefer-stable'
+          - php: 8.4
+            laravel: 12.*
+            testbench: 10.*
+            composer-flag: '--prefer-stable'
+          - php: 8.2
+            laravel: 12.*
+            testbench: 10.*
+            composer-flag: '--prefer-lowest'
+          - php: 8.3
+            laravel: 12.*
+            testbench: 10.*
+            composer-flag: '--prefer-lowest'
+          - php: 8.4
+            laravel: 12.*
+            testbench: 10.*
+            composer-flag: '--prefer-lowest'
+          # Laravel 13.*
+          - php: 8.3
+            laravel: 13.*
+            testbench: 11.*
+            composer-flag: '--prefer-stable'
+          - php: 8.4
+            laravel: 13.*
+            testbench: 11.*
+            composer-flag: '--prefer-stable'
+          - php: 8.3
+            laravel: 13.*
+            testbench: 11.*
+            composer-flag: '--prefer-lowest'
+          - php: 8.4
+            laravel: 13.*
+            testbench: 11.*
+            composer-flag: '--prefer-lowest'
     runs-on: ubuntu-latest
 
     steps:
@@ -50,7 +76,7 @@ jobs:
           coverage: none
 
       - name: "Install dependencies"
-        run: composer require "laravel/framework:${{ matrix.laravel }}" --no-interaction --no-update
+        run: composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
 
       - name: "Update dependencies"
         run: composer update ${{ matrix.composer-flag }} --prefer-dist --no-interaction
