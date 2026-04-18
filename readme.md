@@ -30,6 +30,7 @@ composer require korridor/laravel-has-many-merged "^0"
 
 This package is tested for the following Laravel versions:
 
+- 13.* (PHP 8.3, 8.4)
 - 12.* (PHP 8.2, 8.3, 8.4)
 - 11.* (PHP 8.2, 8.3, 8.4)
 - 10.* (PHP 8.1, 8.2, 8.3)
