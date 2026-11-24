@@ -185,7 +185,7 @@ class HasManyMerged extends Relation
             if (isset($dictionary[$key = $model->getAttribute($this->localKey)])) {
                 $model->setRelation(
                     $relation,
-                    $this->related->newCollection($dictionary[$key])->unique($this->related->getKeyName())
+                    $this->related->newCollection($dictionary[$key])->unique($this->related->getKeyName())->values()
                 );
             }
         }
@@ -208,6 +208,9 @@ class HasManyMerged extends Relation
         foreach ($results as $result) {
             foreach ($foreignKeyNames as $foreignKeyName) {
                 $foreignKeyValue = $result->{$foreignKeyName};
+                if ($foreignKeyValue === null) {
+                    continue;
+                }
                 if (! isset($dictionary[$foreignKeyValue])) {
                     $dictionary[$foreignKeyValue] = [];
                 }
