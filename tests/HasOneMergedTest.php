@@ -520,6 +520,31 @@ class HasOneMergedTest extends TestCase
         $this->assertNull($eagerLoadedUser->latestMessageOfMany);
     }
 
+    public function testOfManyWithDefaultReturnsDefaultModelIfThereIsNoRelatedModel(): void
+    {
+        // Arrange
+        $this->createTwoUsersWereBothAreSenderOrReceiverOfTheSameFourMessages();
+        User::query()->create([
+            'id' => 13,
+            'other_unique_id' => 3,
+            'name' => 'Tester 3',
+        ]);
+        $user = User::query()->findOrFail(13);
+        $existingUser = User::query()->findOrFail(11);
+
+        // Act
+        $default = $user->latestMessageOfMany()->withDefault(['content' => 'No messages yet'])->getResults();
+        $existing = $existingUser->latestMessageOfMany()->withDefault(['content' => 'No messages yet'])->getResults();
+
+        // Assert
+        $this->assertInstanceOf(Message::class, $default);
+        $this->assertFalse($default->exists);
+        $this->assertSame('No messages yet', $default->getAttribute('content'));
+        $this->assertInstanceOf(Message::class, $existing);
+        $this->assertTrue($existing->exists);
+        $this->assertSame(4, $existing->id);
+    }
+
     public function testOfManyReturnsNullWithoutQueryIfParentKeyIsNull(): void
     {
         // Arrange
