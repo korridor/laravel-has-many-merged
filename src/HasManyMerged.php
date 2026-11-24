@@ -35,7 +35,7 @@ class HasManyMerged extends Relation
      * Create a new has one or many relationship instance.
      *
      * @param  Builder<TRelatedModel>  $query
-     * @param  Model  $parent
+     * @param  TDeclaringModel  $parent
      * @param  string[]  $foreignKeys
      * @param  string  $localKey
      * @return void
@@ -100,7 +100,7 @@ class HasManyMerged extends Relation
      * Set the constraints for an eager load of the relation.
      * Note: Used to load relations of multiple models at once.
      *
-     * @param  array  $models
+     * @param  array<int, TDeclaringModel>  $models
      */
     public function addEagerConstraints(array $models): void
     {
@@ -119,10 +119,10 @@ class HasManyMerged extends Relation
      *
      * Essentially, these queries compare on column names like whereColumn.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Builder  $parentQuery
+     * @param  Builder<TRelatedModel>  $query
+     * @param  Builder<TDeclaringModel>  $parentQuery
      * @param  array|mixed  $columns
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder<TRelatedModel>
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
@@ -157,9 +157,9 @@ class HasManyMerged extends Relation
     /**
      * Initialize the relation on a set of models.
      *
-     * @param  array  $models
+     * @param  array<int, TDeclaringModel>  $models
      * @param  string  $relation
-     * @return array
+     * @return array<int, TDeclaringModel>
      */
     public function initRelation(array $models, $relation)
     {
@@ -175,10 +175,10 @@ class HasManyMerged extends Relation
      * Match the eagerly loaded results to their parents.
      * Info: From HasMany class.
      *
-     * @param  array  $models
-     * @param  Collection  $results
+     * @param  array<int, TDeclaringModel>  $models
+     * @param  Collection<int, TRelatedModel>  $results
      * @param  string  $relation
-     * @return array
+     * @return array<int, TDeclaringModel>
      */
     public function match(array $models, Collection $results, $relation)
     {
@@ -188,7 +188,8 @@ class HasManyMerged extends Relation
         // link them up with their children using the keyed dictionary to make the
         // matching very convenient and easy work. Then we'll just return them.
         foreach ($models as $model) {
-            if (isset($dictionary[$key = $model->getAttribute($this->localKey)])) {
+            $key = $model->getAttribute($this->localKey);
+            if ((is_int($key) || is_string($key)) && isset($dictionary[$key])) {
                 $model->setRelation(
                     $relation,
                     $this->related->newCollection($dictionary[$key])->unique($this->related->getKeyName())->values()
@@ -203,8 +204,8 @@ class HasManyMerged extends Relation
      * Build model dictionary keyed by the relation's foreign key.
      * Note: Custom code.
      *
-     * @param  Collection  $results
-     * @return array
+     * @param  Collection<int, TRelatedModel>  $results
+     * @return array<array-key, list<TRelatedModel>>
      */
     protected function buildDictionary(Collection $results): array
     {
