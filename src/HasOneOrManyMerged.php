@@ -103,7 +103,7 @@ abstract class HasOneOrManyMerged extends Relation
      * Set the constraints for an eager load of the relation.
      * Note: Used to load relations of multiple models at once.
      *
-     * @param  array  $models
+     * @param  array<int, TDeclaringModel>  $models
      */
     public function addEagerConstraints(array $models): void
     {
@@ -122,10 +122,10 @@ abstract class HasOneOrManyMerged extends Relation
      *
      * Essentially, these queries compare on column names like whereColumn.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Builder  $parentQuery
+     * @param  Builder<TRelatedModel>  $query
+     * @param  Builder<TDeclaringModel>  $parentQuery
      * @param  array|mixed  $columns
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder<TRelatedModel>
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
@@ -162,8 +162,8 @@ abstract class HasOneOrManyMerged extends Relation
      * The models of each key keep the order of the query results.
      * Note: Custom code.
      *
-     * @param  Collection  $results
-     * @return array<array-key, array<int, TRelatedModel>>
+     * @param  Collection<int, TRelatedModel>  $results
+     * @return array<array-key, list<TRelatedModel>>
      */
     protected function buildDictionary(Collection $results): array
     {

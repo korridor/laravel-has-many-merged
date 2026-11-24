@@ -29,7 +29,7 @@ trait HasOneMergedRelation
 
         $localKey = $localKey ?: $this->getKeyName();
 
-        $foreignKeys = array_map(function ($foreignKey) use ($instance) {
+        $foreignKeys = array_map(function (string $foreignKey) use ($instance): string {
             return $instance->getTable() . '.' . $foreignKey;
         }, $foreignKeys);
 
