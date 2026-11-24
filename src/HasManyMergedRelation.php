@@ -10,10 +10,12 @@ use InvalidArgumentException;
 trait HasManyMergedRelation
 {
     /**
-     * @param  class-string  $related
+     * @template TRelatedModel of Model
+     *
+     * @param  class-string<TRelatedModel>  $related
      * @param  string[]|null  $foreignKeys
      * @param  string|null  $localKey
-     * @return HasManyMerged
+     * @return HasManyMerged<TRelatedModel, $this>
      */
     public function hasManyMerged(string $related, ?array $foreignKeys = null, ?string $localKey = null): HasManyMerged
     {
@@ -25,7 +27,7 @@ trait HasManyMergedRelation
 
         $localKey = $localKey ?: $this->getKeyName();
 
-        $foreignKeys = array_map(function ($foreignKey) use ($instance) {
+        $foreignKeys = array_map(function (string $foreignKey) use ($instance): string {
             return $instance->getTable() . '.' . $foreignKey;
         }, $foreignKeys);
 
