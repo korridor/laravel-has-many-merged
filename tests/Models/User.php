@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Korridor\LaravelHasManyMerged\Tests\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -21,7 +22,13 @@ use Korridor\LaravelHasManyMerged\HasOneMergedRelation;
  * @property-read Collection<int, Message> $messages
  * @property-read Message|null $latestMessage
  * @property-read Message|null $oldestMessage
+ * @property-read Message|null $latestMessageOfMany
+ * @property-read Message|null $oldestMessageOfMany
+ * @property-read Message|null $latestCreatedMessageOfMany
+ * @property-read Message|null $oldestCreatedMessageOfMany
+ * @property-read Message|null $latestCreatedMessageWithContentIntegerOneOfMany
  * @property-read Message $latestMessageWithDefault
+ * @property int $latest_created_message_of_many_count
  */
 class User extends Model
 {
@@ -82,6 +89,56 @@ class User extends Model
         return $this->hasOneMerged(Message::class, ['sender_user_id', 'receiver_user_id'], 'other_unique_id')
             ->orderBy('created_at')
             ->orderBy('id');
+    }
+
+    /**
+     * @return HasOneMerged<Message, $this>
+     */
+    public function latestMessageOfMany(): HasOneMerged
+    {
+        return $this->hasOneMerged(Message::class, ['sender_user_id', 'receiver_user_id'], 'other_unique_id')
+            ->latestOfMany();
+    }
+
+    /**
+     * @return HasOneMerged<Message, $this>
+     */
+    public function oldestMessageOfMany(): HasOneMerged
+    {
+        return $this->hasOneMerged(Message::class, ['sender_user_id', 'receiver_user_id'], 'other_unique_id')
+            ->oldestOfMany();
+    }
+
+    /**
+     * @return HasOneMerged<Message, $this>
+     */
+    public function latestCreatedMessageOfMany(): HasOneMerged
+    {
+        return $this->hasOneMerged(Message::class, ['sender_user_id', 'receiver_user_id'], 'other_unique_id')
+            ->latestOfMany('created_at');
+    }
+
+    /**
+     * @return HasOneMerged<Message, $this>
+     */
+    public function oldestCreatedMessageOfMany(): HasOneMerged
+    {
+        return $this->hasOneMerged(Message::class, ['sender_user_id', 'receiver_user_id'], 'other_unique_id')
+            ->oldestOfMany('created_at');
+    }
+
+    /**
+     * @return HasOneMerged<Message, $this>
+     */
+    public function latestCreatedMessageWithContentIntegerOneOfMany(): HasOneMerged
+    {
+        return $this->hasOneMerged(Message::class, ['sender_user_id', 'receiver_user_id'], 'other_unique_id')
+            ->ofMany([
+                'created_at' => 'max',
+                'id' => 'max',
+            ], function (Builder $query): void {
+                $query->where('content_integer', '=', 1);
+            });
     }
 
     /**
