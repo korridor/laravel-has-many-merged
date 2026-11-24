@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Korridor\LaravelHasManyMerged\HasManyMerged;
 use Korridor\LaravelHasManyMerged\HasManyMergedRelation;
+use Korridor\LaravelHasManyMerged\HasOneMerged;
+use Korridor\LaravelHasManyMerged\HasOneMergedRelation;
 
 /**
  * @property int $id
@@ -17,10 +19,13 @@ use Korridor\LaravelHasManyMerged\HasManyMergedRelation;
  * @property int $messages_sum_content_integer
  * @property int $messages_count
  * @property-read Collection<int, Message> $messages
+ * @property-read Message|null $latestMessage
+ * @property-read Message|null $oldestMessage
  */
 class User extends Model
 {
     use HasManyMergedRelation;
+    use HasOneMergedRelation;
 
     /**
      * The primary key for the model.
@@ -46,6 +51,26 @@ class User extends Model
     public function messages(): HasManyMerged
     {
         return $this->hasManyMerged(Message::class, ['sender_user_id', 'receiver_user_id'], 'other_unique_id');
+    }
+
+    /**
+     * @return HasOneMerged<Message, $this>
+     */
+    public function latestMessage(): HasOneMerged
+    {
+        return $this->hasOneMerged(Message::class, ['sender_user_id', 'receiver_user_id'], 'other_unique_id')
+            ->orderByDesc('created_at')
+            ->orderByDesc('id');
+    }
+
+    /**
+     * @return HasOneMerged<Message, $this>
+     */
+    public function oldestMessage(): HasOneMerged
+    {
+        return $this->hasOneMerged(Message::class, ['sender_user_id', 'receiver_user_id'], 'other_unique_id')
+            ->orderBy('created_at')
+            ->orderBy('id');
     }
 
     /**
