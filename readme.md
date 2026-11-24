@@ -180,6 +180,51 @@ public function latestMessage(): HasOneMerged
 > Do not add `limit()` or `take()` to the relation, neither in the relation definition nor in an eager loading constraint.
 > The limit applies to the whole eager loading query and not per parent, so most parents would end up without a related model.
 
+#### Has one merged of many
+
+Like Laravel's [has one of many](https://laravel.com/docs/eloquent-relationships#has-one-of-many) relations, `hasOneMerged` supports `latestOfMany()`, `oldestOfMany()` and `ofMany()`.
+The selected model is determined in the database with an aggregate subquery (no window functions, so it also works on MySQL 5.7).
+This way eager loading only fetches one model per parent, and existence queries like `whereHas`, `has`, `whereDoesntHave` and `withCount` only consider the selected model.
+
+```php
+public function latestMessage(): HasOneMerged
+{
+    // The message with the highest id
+    return $this->hasOneMerged(Message::class, ['sender_user_id', 'receiver_user_id'])
+        ->latestOfMany();
+}
+
+public function firstMessage(): HasOneMerged
+{
+    // The message with the lowest created_at, the lowest id is used as tiebreaker
+    return $this->hasOneMerged(Message::class, ['sender_user_id', 'receiver_user_id'])
+        ->oldestOfMany('created_at');
+}
+
+public function latestPublishedMessage(): HasOneMerged
+{
+    // The latest published message, the highest id is used as tiebreaker
+    return $this->hasOneMerged(Message::class, ['sender_user_id', 'receiver_user_id'])
+        ->ofMany([
+            'published_at' => 'max',
+            'id' => 'max',
+        ], function (Builder $query) {
+            $query->where('published_at', '<', now());
+        });
+}
+```
+
+```php
+// Users whose latest message is unread
+$users = User::whereHas('latestMessage', function ($query) {
+    $query->whereNull('read_at');
+})->get();
+```
+
+The model is selected per parent across all foreign keys, so the same message can be selected for several parents (for example the latest message of both its sender and its receiver).
+As with Laravel's `ofMany`, constraints added to the relation (for example in a constrained eager load or `whereHas`) are applied to the selected model and do not select a different one.
+Use the closure of `ofMany()` to restrict which models can be selected.
+
 ### Limitations
 
 Both relations are read-only, because it is ambiguous which of the foreign keys should be set when creating a related model.
