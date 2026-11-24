@@ -256,11 +256,14 @@ class HasManyMerged extends Relation
     /**
      * Get the results of the relationship.
      *
-     * @phpstan-return \Traversable<int, TRelatedModel>
+     * @return Collection<int, TRelatedModel>
      */
     public function getResults()
     {
-        return $this->get();
+        /** @var Collection<int, TRelatedModel> $results */
+        $results = $this->get();
+
+        return $results;
     }
 
     /**

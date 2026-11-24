@@ -31,7 +31,10 @@ trait HasManyMergedRelation
             return $instance->getTable() . '.' . $foreignKey;
         }, $foreignKeys);
 
-        return new HasManyMerged($instance->newQuery(), $this, $foreignKeys, $localKey);
+        /** @var \Illuminate\Database\Eloquent\Builder<TRelatedModel> $query */
+        $query = $instance->newQuery();
+
+        return new HasManyMerged($query, $this, $foreignKeys, $localKey);
     }
 
     /**
