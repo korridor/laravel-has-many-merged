@@ -337,6 +337,41 @@ class HasOneMergedTest extends TestCase
         $this->assertSame('No messages for Tester 3', $default->getAttribute('content'));
     }
 
+    public function testHasOneMergedWithEagerLoadingSelectsTheSameModelForSeveralParents(): void
+    {
+        // Arrange
+        $this->createTwoUsersWereBothAreSenderOrReceiverOfTheSameFourMessages();
+        // The newest message is the latest message of both its sender and its receiver.
+        Message::query()->create([
+            'id' => 5,
+            'content' => 'E - This is a message!',
+            'sender_user_id' => 1,
+            'receiver_user_id' => 2,
+            'content_integer' => 1,
+            'created_at' => Carbon::now(),
+        ]);
+
+        // Act
+        $users = User::with(['latestMessage'])->get();
+
+        // Assert
+        $this->assertSame(5, $users->firstOrFail('id', 11)->latestMessage?->id);
+        $this->assertSame(5, $users->firstOrFail('id', 12)->latestMessage?->id);
+    }
+
+    public function testHasOneMergedWithNullForeignKeysThrowsException(): void
+    {
+        // Arrange
+        $user = new User();
+
+        // Assert
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('hasOneMerged() requires at least one foreign key.');
+
+        // Act
+        $user->hasOneMerged(Message::class, null, 'other_unique_id');
+    }
+
     public function testHasOneMergedWithoutForeignKeysThrowsException(): void
     {
         // Arrange
