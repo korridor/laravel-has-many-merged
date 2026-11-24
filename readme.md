@@ -14,13 +14,13 @@ This relation fully supports lazy and eager loading.
 
 ## Installation
 
-You can install the package via composer with following command:
+You can install the package via composer with the following command:
 
 ```bash
 composer require korridor/laravel-has-many-merged
 ```
 
-If you want to use this package with older Laravel/PHP version please install the 0.* version.
+If you want to use this package with an older Laravel/PHP version (Laravel 6 to 9, PHP 7.1+), please install the 0.* version.
 
 ```bash
 composer require korridor/laravel-has-many-merged "^0"
@@ -35,26 +35,28 @@ This package is tested for the following Laravel versions:
 - 11.* (PHP 8.2, 8.3, 8.4)
 - 10.* (PHP 8.1, 8.2, 8.3)
 
-## Usage examples
+## Usage
 
 In the following example there are two models User and Message.
 Each message has a sender and a receiver.
 The User model has two hasMany relations - one for the sent messages and the other for the received ones.
 
-With this plugin you can add a relation that contains sent and received messages of a user.
+With this package you can add a relation that contains sent and received messages of a user.
 
 ```php
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Korridor\LaravelHasManyMerged\HasManyMerged;
 use Korridor\LaravelHasManyMerged\HasManyMergedRelation;
 
 class User extends Model
 {
     use HasManyMergedRelation;
-    
+
     // ...
 
     /**
-     * @return HasManyMerged<Message>
+     * @return HasManyMerged<Message, $this>
      */
     public function messages(): HasManyMerged
     {
@@ -62,7 +64,7 @@ class User extends Model
     }
 
     /**
-     * @return HasMany<Message>
+     * @return HasMany<Message, $this>
      */
     public function sentMessages(): HasMany
     {
@@ -70,7 +72,7 @@ class User extends Model
     }
 
     /**
-     * @return HasMany<Message>
+     * @return HasMany<Message, $this>
      */
     public function receivedMessages(): HasMany
     {
@@ -79,6 +81,45 @@ class User extends Model
 }
 ```
 
+The relation can be used like any other Eloquent relation:
+
+```php
+// Lazy loading
+$messages = $user->messages;
+
+// Eager loading
+$users = User::with('messages')->get();
+
+// Constrained eager loading
+$users = User::with(['messages' => function ($query) {
+    $query->orderBy('created_at', 'desc');
+}])->get();
+
+// Querying the relation
+$unreadMessages = $user->messages()->whereNull('read_at')->get();
+
+// Aggregates and existence queries
+$users = User::withCount('messages')->withSum('messages', 'size')->get();
+$users = User::whereHas('messages', function ($query) {
+    $query->where('subject', 'like', '%invoice%');
+})->get();
+```
+
+A model that matches more than one of the foreign keys (for example a message a user sent to themselves) is only included once.
+
+### Method signatures
+
+```php
+hasManyMerged(string $related, array $foreignKeys, ?string $localKey = null): HasManyMerged
+hasOneMerged(string $related, array $foreignKeys, ?string $localKey = null): HasOneMerged
+```
+
+Both methods take the same parameters:
+
+- `$related`: The class name of the related model.
+- `$foreignKeys`: The columns on the related model's table that reference the parent model. At least one is required, otherwise an `InvalidArgumentException` is thrown.
+- `$localKey`: The column on the parent model that the foreign keys reference. Defaults to the parent model's primary key.
+
 ### Has one merged
 
 If you only need one model of the merged relation, for example the latest message of a user, you can use the `hasOneMerged` relation.
@@ -86,6 +127,7 @@ Add an ordering to the relation to define which model is returned.
 If no related model exists, the relation returns `null`.
 
 ```php
+use Illuminate\Database\Eloquent\Model;
 use Korridor\LaravelHasManyMerged\HasOneMerged;
 use Korridor\LaravelHasManyMerged\HasOneMergedRelation;
 
@@ -116,6 +158,13 @@ $users = User::with('latestMessage')
 
 Note that eager loading fetches all matching related models and keeps the first one per parent, similar to Laravel's `hasOne` relation without `ofMany`.
 
+### Limitations
+
+Both relations are read-only, because it is ambiguous which of the foreign keys should be set when creating a related model.
+Methods like `save()` or `saveMany()` are not available.
+Do not use `create()` or `make()` on the relations either: they are passed on to the query builder and create a model **without any foreign key set**.
+Use the underlying hasMany relations (for example `sentMessages()`) to create related models.
+
 ## Contributing
 
 I am open for suggestions and contributions. Just create an issue or a pull request.
@@ -126,7 +175,7 @@ The `docker` folder contains a local docker environment for development.
 The docker workspace has composer and xdebug installed.
 
 ```bash
-docker-compose run workspace bash
+docker compose -f docker/docker-compose.yml run workspace bash
 ```
 
 ### Testing
@@ -134,10 +183,15 @@ docker-compose run workspace bash
 The `composer test` command runs all tests with [phpunit](https://phpunit.de/).
 The `composer test-coverage` command runs all tests with phpunit and creates a coverage report into the `coverage` folder.
 
-### Codeformatting/Linting
+### Code formatting/Linting
 
 The `composer fix` command formats the code with [php-cs-fixer](https://github.com/FriendsOfPHP/PHP-CS-Fixer).
 The `composer lint` command checks the code with [phpcs](https://github.com/squizlabs/PHP_CodeSniffer).
+The CI pipeline runs both tools, so make sure that both pass before opening a pull request.
+
+### Static analysis
+
+The `composer analyse` command checks the code with [Larastan](https://github.com/larastan/larastan) (PHPStan) on level 9.
 
 ## License
 
