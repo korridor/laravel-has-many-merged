@@ -124,6 +124,7 @@ Both methods take the same parameters:
 
 If you only need one model of the merged relation, for example the latest message of a user, you can use the `hasOneMerged` relation.
 Add an ordering to the relation to define which model is returned.
+Add a unique column like the primary key as a tiebreaker, otherwise models with the same value (for example the same `created_at`) are returned in an undefined order.
 If no related model exists, the relation returns `null`.
 
 ```php
@@ -143,7 +144,8 @@ class User extends Model
     public function latestMessage(): HasOneMerged
     {
         return $this->hasOneMerged(Message::class, ['sender_user_id', 'receiver_user_id'])
-            ->latest();
+            ->latest()
+            ->latest('id');
     }
 }
 ```
@@ -160,6 +162,10 @@ Note that the relation behaves like Laravel's `hasOne` relation without `ofMany`
 
 - Eager loading fetches all matching related models and keeps the first one per parent.
 - `whereHas()`, `has()` and `withCount()` ignore the ordering and consider all related models, not only the one the relation returns.
+
+> [!WARNING]
+> Do not add `limit()` or `take()` to the relation, neither in the relation definition nor in an eager loading constraint.
+> The limit applies to the whole eager loading query and not per parent, so most parents would end up without a related model.
 
 ### Limitations
 
