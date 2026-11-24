@@ -6,6 +6,7 @@ namespace Korridor\LaravelHasManyMerged;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Concerns\SupportsDefaultModels;
 
 /**
  * Returns a single related model that matches any of the foreign keys.
@@ -17,6 +18,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class HasOneMerged extends HasOneOrManyMerged
 {
+    use SupportsDefaultModels;
+
     /**
      * Initialize the relation on a set of models.
      * Info: From HasOne class.
@@ -28,7 +31,7 @@ class HasOneMerged extends HasOneOrManyMerged
     public function initRelation(array $models, $relation)
     {
         foreach ($models as $model) {
-            $model->setRelation($relation, null);
+            $model->setRelation($relation, $this->getDefaultModelFor($model));
         }
 
         return $models;
@@ -65,9 +68,35 @@ class HasOneMerged extends HasOneOrManyMerged
     public function getResults()
     {
         if ($this->getParentKey() === null) {
-            return null;
+            return $this->getDefaultModelFor($this->parent);
         }
 
-        return $this->query->first();
+        return $this->query->first() ?: $this->getDefaultModelFor($this->parent);
+    }
+
+    /**
+     * Get the default model (see withDefault()) or null if no default is set.
+     *
+     * @param  TDeclaringModel  $parent
+     * @return ?TRelatedModel
+     */
+    protected function getDefaultModelFor(Model $parent): ?Model
+    {
+        /** @var ?TRelatedModel $default */
+        $default = $this->getDefaultFor($parent);
+
+        return $default;
+    }
+
+    /**
+     * Make a new related instance for the given model.
+     * No foreign key is set, because it is ambiguous which of the foreign keys should be used.
+     *
+     * @param  TDeclaringModel  $parent
+     * @return TRelatedModel
+     */
+    protected function newRelatedInstanceFor(Model $parent)
+    {
+        return $this->related->newInstance();
     }
 }

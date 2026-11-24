@@ -125,7 +125,7 @@ Both methods take the same parameters:
 If you only need one model of the merged relation, for example the latest message of a user, you can use the `hasOneMerged` relation.
 Add an ordering to the relation to define which model is returned.
 Add a unique column like the primary key as a tiebreaker, otherwise models with the same value (for example the same `created_at`) are returned in an undefined order.
-If no related model exists, the relation returns `null`.
+If no related model exists, the relation returns `null`, unless you add `withDefault()` like on Laravel's `hasOne` relation.
 
 ```php
 use Illuminate\Database\Eloquent\Model;
@@ -162,6 +162,19 @@ Note that the relation behaves like Laravel's `hasOne` relation without `ofMany`
 
 - Eager loading fetches all matching related models and keeps the first one per parent.
 - `whereHas()`, `has()` and `withCount()` ignore the ordering and consider all related models, not only the one the relation returns.
+
+Like Laravel's `hasOne`, `withDefault()` returns a new, unsaved model instead of `null` if no related model exists.
+It accepts attributes or a closure. No foreign key is set on the default model, because it is ambiguous which of the foreign keys should be used.
+
+```php
+public function latestMessage(): HasOneMerged
+{
+    return $this->hasOneMerged(Message::class, ['sender_user_id', 'receiver_user_id'])
+        ->orderByDesc('created_at')
+        ->orderByDesc('id')
+        ->withDefault(['content' => 'No messages yet']);
+}
+```
 
 > [!WARNING]
 > Do not add `limit()` or `take()` to the relation, neither in the relation definition nor in an eager loading constraint.

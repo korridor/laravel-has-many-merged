@@ -256,6 +256,87 @@ class HasOneMergedTest extends TestCase
         $this->assertSame([12, 11], $users->pluck('id')->all());
     }
 
+    public function testHasOneMergedWithDefaultReturnsRelatedModelIfItExists(): void
+    {
+        // Arrange
+        $this->createTwoUsersWereBothAreSenderOrReceiverOfTheSameFourMessages();
+
+        // Act
+        $lazyLoadedUser = User::query()->findOrFail(11);
+        $eagerLoadedUser = User::with(['latestMessageWithDefault'])->findOrFail(11);
+
+        // Assert
+        $this->assertSame(1, $lazyLoadedUser->latestMessageWithDefault->id);
+        $this->assertTrue($lazyLoadedUser->latestMessageWithDefault->exists);
+        $this->assertSame(1, $eagerLoadedUser->latestMessageWithDefault->id);
+    }
+
+    public function testHasOneMergedWithDefaultReturnsDefaultModelIfThereIsNoRelatedModel(): void
+    {
+        // Arrange
+        $this->createTwoUsersWereBothAreSenderOrReceiverOfTheSameFourMessages();
+        User::query()->create([
+            'id' => 13,
+            'other_unique_id' => 3,
+            'name' => 'Tester 3',
+        ]);
+
+        // Act
+        $lazyLoadedUser = User::query()->findOrFail(13);
+        $eagerLoadedUser = User::with(['latestMessageWithDefault'])->findOrFail(13);
+        $lazyDefault = $lazyLoadedUser->latestMessageWithDefault;
+        $eagerDefault = $eagerLoadedUser->latestMessageWithDefault;
+
+        // Assert
+        foreach ([$lazyDefault, $eagerDefault] as $default) {
+            $this->assertInstanceOf(Message::class, $default);
+            $this->assertFalse($default->exists);
+            $this->assertSame('No messages yet', $default->getAttribute('content'));
+            // It is ambiguous which foreign key should be set, so none is set.
+            $this->assertNull($default->getAttribute('sender_user_id'));
+            $this->assertNull($default->getAttribute('receiver_user_id'));
+        }
+    }
+
+    public function testHasOneMergedWithDefaultReturnsDefaultModelWithoutQueryIfParentKeyIsNull(): void
+    {
+        // Arrange
+        $user = new User();
+
+        // Act
+        $this->db::connection()->enableQueryLog();
+        $default = $user->latestMessageWithDefault;
+        $queries = $this->db::connection()->getQueryLog();
+        $this->db::connection()->disableQueryLog();
+
+        // Assert
+        $this->assertInstanceOf(Message::class, $default);
+        $this->assertFalse($default->exists);
+        $this->assertCount(0, $queries);
+    }
+
+    public function testHasOneMergedWithDefaultAcceptsClosure(): void
+    {
+        // Arrange
+        User::query()->create([
+            'id' => 13,
+            'other_unique_id' => 3,
+            'name' => 'Tester 3',
+        ]);
+        $user = User::query()->findOrFail(13);
+
+        // Act
+        $default = $user->hasOneMerged(Message::class, ['sender_user_id', 'receiver_user_id'], 'other_unique_id')
+            ->withDefault(function (Message $message, User $parent): void {
+                $message->setAttribute('content', 'No messages for ' . $parent->name);
+            })
+            ->getResults();
+
+        // Assert
+        $this->assertInstanceOf(Message::class, $default);
+        $this->assertSame('No messages for Tester 3', $default->getAttribute('content'));
+    }
+
     public function testHasOneMergedWithoutForeignKeysThrowsException(): void
     {
         // Arrange

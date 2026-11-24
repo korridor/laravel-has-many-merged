@@ -21,6 +21,7 @@ use Korridor\LaravelHasManyMerged\HasOneMergedRelation;
  * @property-read Collection<int, Message> $messages
  * @property-read Message|null $latestMessage
  * @property-read Message|null $oldestMessage
+ * @property-read Message $latestMessageWithDefault
  */
 class User extends Model
 {
@@ -81,6 +82,17 @@ class User extends Model
         return $this->hasOneMerged(Message::class, ['sender_user_id', 'receiver_user_id'], 'other_unique_id')
             ->orderBy('created_at')
             ->orderBy('id');
+    }
+
+    /**
+     * @return HasOneMerged<Message, $this>
+     */
+    public function latestMessageWithDefault(): HasOneMerged
+    {
+        return $this->hasOneMerged(Message::class, ['sender_user_id', 'receiver_user_id'], 'other_unique_id')
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->withDefault(['content' => 'No messages yet']);
     }
 
     /**
