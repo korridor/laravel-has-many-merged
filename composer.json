@@ -16,9 +16,9 @@
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^3",
-    "nunomaduro/larastan": "^2.0|^3",
-    "orchestra/testbench": "^8|^9|^10",
-    "phpunit/phpunit": "^10|^11",
+    "larastan/larastan": "^2.9|^3",
+    "orchestra/testbench": "^8|^9|^10|^11",
+    "phpunit/phpunit": "^10|^11|^12",
     "squizlabs/php_codesniffer": "^3.5"
   },
   "autoload": {
