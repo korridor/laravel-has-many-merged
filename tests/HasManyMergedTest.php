@@ -62,10 +62,8 @@ class HasManyMergedTest extends TestCase
 
         // Act
         $this->db::connection()->enableQueryLog();
-        /** @var User|null $user1 */
-        $user1 = User::query()->find(11);
-        /** @var User|null $user2 */
-        $user2 = User::query()->find(12);
+        $user1 = User::query()->findOrFail(11);
+        $user2 = User::query()->findOrFail(12);
         $messagesOfUser1 = $user1->messages;
         $messagesOfUser2 = $user2->messages;
         $queries = $this->db::connection()->getQueryLog();
@@ -89,8 +87,8 @@ class HasManyMergedTest extends TestCase
         // Act
         $this->db::connection()->enableQueryLog();
         $users = User::with(['messages'])->get();
-        $user1 = $users->firstWhere('id', 11);
-        $user2 = $users->firstWhere('id', 12);
+        $user1 = $users->firstOrFail('id', 11);
+        $user2 = $users->firstOrFail('id', 12);
         $messagesOfUser1 = $user1->messages;
         $messagesOfUser2 = $user2->messages;
         $queries = $this->db::connection()->getQueryLog();
@@ -114,8 +112,8 @@ class HasManyMergedTest extends TestCase
         // Act
         $this->db::connection()->enableQueryLog();
         $users = User::with(['messages'])->withCount(['messages', 'sentMessages'])->get();
-        $user1 = $users->firstWhere('id', 11);
-        $user2 = $users->firstWhere('id', 12);
+        $user1 = $users->firstOrFail('id', 11);
+        $user2 = $users->firstOrFail('id', 12);
         $messagesOfUser1 = $user1->messages;
         $messagesOfUser2 = $user2->messages;
         $queries = $this->db::connection()->getQueryLog();
@@ -141,8 +139,8 @@ class HasManyMergedTest extends TestCase
         // Act
         $this->db::connection()->enableQueryLog();
         $users = User::with(['messages'])->withSum('messages', 'content_integer')->get();
-        $user1 = $users->firstWhere('id', 11);
-        $user2 = $users->firstWhere('id', 12);
+        $user1 = $users->firstOrFail('id', 11);
+        $user2 = $users->firstOrFail('id', 12);
         $messagesOfUser1 = $user1->messages;
         $messagesOfUser2 = $user2->messages;
         $queries = $this->db::connection()->getQueryLog();
@@ -175,7 +173,7 @@ class HasManyMergedTest extends TestCase
 
         // Assert
         $this->assertEquals(1, count($users));
-        $this->assertEquals(2, $users->first()->other_unique_id);
+        $this->assertEquals(2, $users->firstOrFail()->other_unique_id);
         $this->assertCount(2, $queries);
     }
 
@@ -188,8 +186,8 @@ class HasManyMergedTest extends TestCase
         $this->db::connection()->enableQueryLog();
         $users = User::all();
         $users->load(['messages']);
-        $user1 = $users->firstWhere('id', 11);
-        $user2 = $users->firstWhere('id', 12);
+        $user1 = $users->firstOrFail('id', 11);
+        $user2 = $users->firstOrFail('id', 12);
         $messagesOfUser1 = $user1->messages;
         $messagesOfUser2 = $user2->messages;
         $queries = $this->db::connection()->getQueryLog();
@@ -217,8 +215,8 @@ class HasManyMergedTest extends TestCase
                 $builder->where('content', 'like', 'A -%');
             },
         ])->get();
-        $user1 = $users->firstWhere('id', 11);
-        $user2 = $users->firstWhere('id', 12);
+        $user1 = $users->firstOrFail('id', 11);
+        $user2 = $users->firstOrFail('id', 12);
         $messagesOfUser1 = $user1->messages;
         $messagesOfUser2 = $user2->messages;
         $queries = $this->db::connection()->getQueryLog();
@@ -246,8 +244,8 @@ class HasManyMergedTest extends TestCase
                 $builder->orderBy('id', 'desc');
             },
         ])->get();
-        $user1 = $users->firstWhere('id', 11);
-        $user2 = $users->firstWhere('id', 12);
+        $user1 = $users->firstOrFail('id', 11);
+        $user2 = $users->firstOrFail('id', 12);
         $messagesOfUser1 = $user1->messages;
         $messagesOfUser2 = $user2->messages;
         $queries = $this->db::connection()->getQueryLog();
@@ -272,7 +270,7 @@ class HasManyMergedTest extends TestCase
 
         // Act
         $users = User::with(['messages'])->get();
-        $user1 = $users->firstWhere('id', 11);
+        $user1 = $users->firstOrFail('id', 11);
 
         // Assert
         $this->assertSame([0, 1, 2], $user1->messages->keys()->all());
@@ -318,8 +316,8 @@ class HasManyMergedTest extends TestCase
 
         // Act
         $users = User::with(['messages'])->get();
-        $user1 = $users->firstWhere('id', 11);
-        $user2 = $users->firstWhere('id', 12);
+        $user1 = $users->firstOrFail('id', 11);
+        $user2 = $users->firstOrFail('id', 12);
 
         // Assert
         $this->assertSame([1, 2, 3, 5], $user1->messages->pluck('id')->sort()->values()->all());
