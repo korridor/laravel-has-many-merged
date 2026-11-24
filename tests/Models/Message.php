@@ -10,6 +10,7 @@ use Korridor\LaravelHasManyMerged\HasManyMergedRelation;
 
 /**
  * @property int $id
+ * @property \Illuminate\Support\Carbon|null $created_at
  */
 class Message extends Model
 {
@@ -26,6 +27,7 @@ class Message extends Model
         'content_integer',
         'sender_user_id',
         'receiver_user_id',
+        'created_at',
     ];
 
     /**

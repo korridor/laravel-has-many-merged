@@ -6,7 +6,7 @@
 [![GitHub Workflow Tests](https://img.shields.io/github/actions/workflow/status/korridor/laravel-has-many-merged/unittests.yml?label=tests&style=flat-square)](https://github.com/korridor/laravel-has-many-merged/actions/workflows/unittests.yml)
 [![Codecov](https://img.shields.io/codecov/c/github/korridor/laravel-has-many-merged?style=flat-square)](https://codecov.io/gh/korridor/laravel-has-many-merged)
 
-Custom relationship for Eloquent that merges/combines multiple one-to-may (hasMany) relationships.
+Custom relationship for Eloquent that merges/combines multiple one-to-many (hasMany) relationships into one hasManyMerged or hasOneMerged relation.
 This relation fully supports lazy and eager loading.
 
 > [!NOTE]
@@ -78,6 +78,43 @@ class User extends Model
     }
 }
 ```
+
+### Has one merged
+
+If you only need one model of the merged relation, for example the latest message of a user, you can use the `hasOneMerged` relation.
+Add an ordering to the relation to define which model is returned.
+If no related model exists, the relation returns `null`.
+
+```php
+use Korridor\LaravelHasManyMerged\HasOneMerged;
+use Korridor\LaravelHasManyMerged\HasOneMergedRelation;
+
+class User extends Model
+{
+    use HasOneMergedRelation;
+
+    // ...
+
+    /**
+     * @return HasOneMerged<Message, $this>
+     */
+    public function latestMessage(): HasOneMerged
+    {
+        return $this->hasOneMerged(Message::class, ['sender_user_id', 'receiver_user_id'])
+            ->latest();
+    }
+}
+```
+
+The relation supports lazy and eager loading, so you can for example sort users by their latest message without N+1 queries:
+
+```php
+$users = User::with('latestMessage')
+    ->get()
+    ->sortByDesc(fn (User $user) => $user->latestMessage?->created_at);
+```
+
+Note that eager loading fetches all matching related models and keeps the first one per parent, similar to Laravel's `hasOne` relation without `ofMany`.
 
 ## Contributing
 
