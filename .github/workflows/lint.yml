@@ -2,13 +2,16 @@ name: Lint
 
 on: [ push ]
 
+permissions:
+  contents: read
+
 jobs:
   lint_with_php_cs_fixer:
     name: "Lint code with PHP-CS-Fixer"
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: "Install dependencies"
         uses: php-actions/composer@v6
@@ -25,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: "Install dependencies"
         uses: php-actions/composer@v6
