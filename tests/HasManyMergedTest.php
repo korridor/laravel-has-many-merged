@@ -263,4 +263,18 @@ class HasManyMergedTest extends TestCase
         $this->assertEquals(2, $user2->receivedMessages()->count());
         $this->assertEquals(2, $user2->sentMessages()->count());
     }
+
+    public function testEagerLoadedRelationHasSequentialKeysWhenAMessageMatchesMultipleForeignKeys(): void
+    {
+        // Arrange
+        $this->createTwoUsersWereBothAreSenderOrReceiverOfTheSameFourMessages();
+
+        // Act
+        $users = User::with(['messages'])->get();
+        $user1 = $users->firstWhere('id', 11);
+
+        // Assert
+        $this->assertSame([0, 1, 2], $user1->messages->keys()->all());
+        $this->assertTrue(array_is_list($user1->messages->toArray()));
+    }
 }
