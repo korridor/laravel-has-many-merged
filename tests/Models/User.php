@@ -54,6 +54,16 @@ class User extends Model
     }
 
     /**
+     * Uses the integer primary key as local key.
+     *
+     * @return HasManyMerged<Message, $this>
+     */
+    public function messagesByPrimaryKey(): HasManyMerged
+    {
+        return $this->hasManyMerged(Message::class, ['sender_user_id', 'receiver_user_id']);
+    }
+
+    /**
      * @return HasOneMerged<Message, $this>
      */
     public function latestMessage(): HasOneMerged
