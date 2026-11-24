@@ -144,8 +144,8 @@ class User extends Model
     public function latestMessage(): HasOneMerged
     {
         return $this->hasOneMerged(Message::class, ['sender_user_id', 'receiver_user_id'])
-            ->latest()
-            ->latest('id');
+            ->orderByDesc('created_at')
+            ->orderByDesc('id');
     }
 }
 ```
