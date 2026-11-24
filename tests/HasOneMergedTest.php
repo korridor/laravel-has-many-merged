@@ -200,6 +200,46 @@ class HasOneMergedTest extends TestCase
         $this->assertSame([12], $users->pluck('id')->all());
     }
 
+    public function testHasOneMergedWhereHasMatchesAnyRelatedModelLikeHasOne(): void
+    {
+        // Arrange
+        $this->createTwoUsersWereBothAreSenderOrReceiverOfTheSameFourMessages();
+
+        // Act
+        // User 12 has older messages with content_integer 1, but the latest message (id 3) has content_integer 2.
+        // Like Laravel's hasOne without ofMany, whereHas() ignores the ordering and matches any related model.
+        $usersWithLatestMessage = User::query()->whereHas('latestMessage', function (Builder $query): void {
+            $query->where('content_integer', '=', 1);
+        })->orderBy('id')->get();
+        $usersWithoutLatestMessage = User::query()->whereDoesntHave('latestMessage', function (Builder $query): void {
+            $query->where('content_integer', '=', 1);
+        })->get();
+
+        // Assert
+        $this->assertSame([11, 12], $usersWithLatestMessage->pluck('id')->all());
+        $this->assertSame([], $usersWithoutLatestMessage->pluck('id')->all());
+    }
+
+    public function testHasOneMergedWithCountCountsAllRelatedModelsLikeHasOne(): void
+    {
+        // Arrange
+        $this->createTwoUsersWereBothAreSenderOrReceiverOfTheSameFourMessages();
+        User::query()->create([
+            'id' => 13,
+            'other_unique_id' => 3,
+            'name' => 'Tester 3',
+        ]);
+
+        // Act
+        $users = User::query()->withCount('latestMessage')->orderBy('id')->get();
+        $usersWithMessage = User::query()->has('latestMessage')->orderBy('id')->get();
+
+        // Assert
+        // Like Laravel's hasOne without ofMany, withCount() counts every related model.
+        $this->assertEquals([3, 3, 0], $users->pluck('latest_message_count')->all());
+        $this->assertSame([11, 12], $usersWithMessage->pluck('id')->all());
+    }
+
     public function testParentsCanBeOrderedByTheirLatestRelatedModel(): void
     {
         // Arrange
