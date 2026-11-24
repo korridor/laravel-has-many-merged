@@ -694,4 +694,25 @@ class HasOneMergedTest extends TestCase
         $this->assertSame('messages_of_many', $closureRelation->getRelationName());
         $this->assertSame(3, $closureRelation->getResults()?->id);
     }
+
+    public function testOfManyMatchIgnoresResultsThatWereNotLoadedByTheRelation(): void
+    {
+        // Arrange
+        $this->createTwoUsersWereBothAreSenderOrReceiverOfTheSameFourMessages();
+        $users = User::query()->orderBy('id')->get();
+        $relation = $users->firstOrFail()->latestMessageOfMany();
+
+        // Act
+        $models = $relation->match(
+            $relation->initRelation($users->all(), 'latestMessageOfMany'),
+            Message::query()->get(),
+            'latestMessageOfMany'
+        );
+
+        // Assert
+        $this->assertCount(2, $models);
+        foreach ($models as $model) {
+            $this->assertNull($model->latestMessageOfMany);
+        }
+    }
 }
