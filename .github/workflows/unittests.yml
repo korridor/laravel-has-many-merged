@@ -132,6 +132,9 @@ jobs:
             extensions: curl, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, iconv
             coverage: xdebug
 
+      - name: "Allow all versions of the tested Laravel releases"
+        run: composer config policy.advisories.block false
+
       - name: "Install dependencies"
         run: composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
 
