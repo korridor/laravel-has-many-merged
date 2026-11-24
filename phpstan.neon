@@ -7,5 +7,4 @@ parameters:
         - src
         - tests
 
-    # Level 9 is the highest level
-    level: 5
+    level: 9
