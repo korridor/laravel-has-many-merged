@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Korridor\LaravelHasManyMerged;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
 
@@ -23,6 +24,7 @@ trait HasOneMergedRelation
             throw new InvalidArgumentException('hasOneMerged() requires at least one foreign key.');
         }
 
+        /** @var TRelatedModel $instance */
         $instance = new $related();
 
         $localKey = $localKey ?: $this->getKeyName();
@@ -31,7 +33,11 @@ trait HasOneMergedRelation
             return $instance->getTable() . '.' . $foreignKey;
         }, $foreignKeys);
 
-        return new HasOneMerged($instance->newQuery(), $this, $foreignKeys, $localKey);
+        // Note: Older Larastan versions resolve newQuery() of a generic model to Builder<Model>.
+        /** @var Builder<TRelatedModel> $query */
+        $query = $instance->newQuery();
+
+        return new HasOneMerged($query, $this, $foreignKeys, $localKey);
     }
 
     /**

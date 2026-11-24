@@ -324,6 +324,41 @@ class HasManyMergedTest extends TestCase
         $this->assertSame([2, 3, 4], $user2->messages->pluck('id')->sort()->values()->all());
     }
 
+    public function testEagerLoadingWithIntegerPrimaryKeyAsLocalKey(): void
+    {
+        // Arrange
+        $this->createTwoUsersWereBothAreSenderOrReceiverOfTheSameFourMessages();
+        Message::query()->create([
+            'id' => 5,
+            'content' => 'E - This is a message!',
+            'sender_user_id' => 11,
+            'receiver_user_id' => 12,
+            'content_integer' => 1,
+        ]);
+        Message::query()->create([
+            'id' => 6,
+            'content' => 'F - This is a message!',
+            'sender_user_id' => 12,
+            'receiver_user_id' => null,
+            'content_integer' => 1,
+        ]);
+
+        // Act
+        $this->db::connection()->enableQueryLog();
+        $users = User::with(['messagesByPrimaryKey'])->get();
+        $queries = $this->db::connection()->getQueryLog();
+        $this->db::connection()->disableQueryLog();
+        $user1 = $users->firstWhere('id', 11);
+        $user2 = $users->firstWhere('id', 12);
+
+        // Assert
+        $this->assertCount(2, $queries);
+        // The integer primary key is inlined into the query instead of being bound.
+        $this->assertStringContainsString('in (11, 12)', $queries[1]['query']);
+        $this->assertSame([5], $user1->messagesByPrimaryKey->pluck('id')->all());
+        $this->assertSame([5, 6], $user2->messagesByPrimaryKey->pluck('id')->sort()->values()->all());
+    }
+
     public function testHasManyMergedConstructorWithoutForeignKeysThrowsException(): void
     {
         // Assert
