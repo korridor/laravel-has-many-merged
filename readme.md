@@ -156,7 +156,10 @@ $users = User::with('latestMessage')
     ->sortByDesc(fn (User $user) => $user->latestMessage?->created_at);
 ```
 
-Note that eager loading fetches all matching related models and keeps the first one per parent, similar to Laravel's `hasOne` relation without `ofMany`.
+Note that the relation behaves like Laravel's `hasOne` relation without `ofMany`:
+
+- Eager loading fetches all matching related models and keeps the first one per parent.
+- `whereHas()`, `has()` and `withCount()` ignore the ordering and consider all related models, not only the one the relation returns.
 
 ### Limitations
 
