@@ -97,8 +97,8 @@ class HasOneMergedTest extends TestCase
         // Act
         $this->db::connection()->enableQueryLog();
         $users = User::with(['latestMessage', 'oldestMessage'])->get();
-        $user1 = $users->firstWhere('id', 11);
-        $user2 = $users->firstWhere('id', 12);
+        $user1 = $users->firstOrFail('id', 11);
+        $user2 = $users->firstOrFail('id', 12);
         $latestMessageUser1 = $user1->latestMessage;
         $oldestMessageUser1 = $user1->oldestMessage;
         $latestMessageUser2 = $user2->latestMessage;
@@ -108,10 +108,10 @@ class HasOneMergedTest extends TestCase
 
         // Assert
         $this->assertCount(3, $queries);
-        $this->assertSame(1, $latestMessageUser1->id);
-        $this->assertSame(2, $oldestMessageUser1->id);
-        $this->assertSame(3, $latestMessageUser2->id);
-        $this->assertSame(4, $oldestMessageUser2->id);
+        $this->assertSame(1, $latestMessageUser1?->id);
+        $this->assertSame(2, $oldestMessageUser1?->id);
+        $this->assertSame(3, $latestMessageUser2?->id);
+        $this->assertSame(4, $oldestMessageUser2?->id);
     }
 
     public function testHasOneMergedWithLazyEagerLoading(): void
@@ -124,8 +124,8 @@ class HasOneMergedTest extends TestCase
         $users->load('latestMessage');
 
         // Assert
-        $this->assertSame(1, $users->firstWhere('id', 11)->latestMessage->id);
-        $this->assertSame(3, $users->firstWhere('id', 12)->latestMessage->id);
+        $this->assertSame(1, $users->firstOrFail('id', 11)->latestMessage?->id);
+        $this->assertSame(3, $users->firstOrFail('id', 12)->latestMessage?->id);
     }
 
     public function testHasOneMergedWithConstrainedEagerLoading(): void
@@ -141,8 +141,8 @@ class HasOneMergedTest extends TestCase
         ])->get();
 
         // Assert
-        $this->assertSame(1, $users->firstWhere('id', 11)->latestMessage->id);
-        $this->assertSame(1, $users->firstWhere('id', 12)->latestMessage->id);
+        $this->assertSame(1, $users->firstOrFail('id', 11)->latestMessage?->id);
+        $this->assertSame(1, $users->firstOrFail('id', 12)->latestMessage?->id);
     }
 
     public function testHasOneMergedReturnsNullIfThereIsNoRelatedModel(): void

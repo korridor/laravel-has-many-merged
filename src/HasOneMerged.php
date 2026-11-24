@@ -21,9 +21,9 @@ class HasOneMerged extends HasOneOrManyMerged
      * Initialize the relation on a set of models.
      * Info: From HasOne class.
      *
-     * @param  array  $models
+     * @param  array<int, TDeclaringModel>  $models
      * @param  string  $relation
-     * @return array
+     * @return array<int, TDeclaringModel>
      */
     public function initRelation(array $models, $relation)
     {
@@ -38,18 +38,19 @@ class HasOneMerged extends HasOneOrManyMerged
      * Match the eagerly loaded results to their parents.
      * The first model per parent (in query order) is used.
      *
-     * @param  array  $models
-     * @param  Collection  $results
+     * @param  array<int, TDeclaringModel>  $models
+     * @param  Collection<int, TRelatedModel>  $results
      * @param  string  $relation
-     * @return array
+     * @return array<int, TDeclaringModel>
      */
     public function match(array $models, Collection $results, $relation)
     {
         $dictionary = $this->buildDictionary($results);
 
         foreach ($models as $model) {
-            if (isset($dictionary[$key = $model->getAttribute($this->localKey)])) {
-                $model->setRelation($relation, reset($dictionary[$key]));
+            $key = $model->getAttribute($this->localKey);
+            if ((is_int($key) || is_string($key)) && isset($dictionary[$key])) {
+                $model->setRelation($relation, $dictionary[$key][0]);
             }
         }
 

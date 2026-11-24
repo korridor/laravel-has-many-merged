@@ -348,8 +348,8 @@ class HasManyMergedTest extends TestCase
         $users = User::with(['messagesByPrimaryKey'])->get();
         $queries = $this->db::connection()->getQueryLog();
         $this->db::connection()->disableQueryLog();
-        $user1 = $users->firstWhere('id', 11);
-        $user2 = $users->firstWhere('id', 12);
+        $user1 = $users->firstOrFail('id', 11);
+        $user2 = $users->firstOrFail('id', 12);
 
         // Assert
         $this->assertCount(2, $queries);
