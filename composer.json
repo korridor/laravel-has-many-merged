@@ -1,7 +1,7 @@
 {
   "name": "korridor/laravel-has-many-merged",
-  "description": "Custom relationship for Eloquent that merges/combines multiple one-to-many (hasMany) relationships",
-  "keywords": ["laravel", "eloquent", "relations", "has-many"],
+  "description": "Custom relationships for Eloquent that merge/combine multiple one-to-many (hasMany) relationships into a hasManyMerged or hasOneMerged relation",
+  "keywords": ["laravel", "eloquent", "relations", "has-many", "has-one"],
   "homepage": "https://github.com/korridor/laravel-has-many-merged",
   "license": "MIT",
   "authors": [
