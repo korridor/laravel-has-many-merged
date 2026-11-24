@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Korridor\LaravelHasManyMerged;
 
 use Illuminate\Database\Eloquent\Model;
+use InvalidArgumentException;
 
 trait HasManyMergedRelation
 {
@@ -16,6 +17,10 @@ trait HasManyMergedRelation
      */
     public function hasManyMerged(string $related, ?array $foreignKeys = null, ?string $localKey = null): HasManyMerged
     {
+        if ($foreignKeys === null || $foreignKeys === []) {
+            throw new InvalidArgumentException('hasManyMerged() requires at least one foreign key.');
+        }
+
         $instance = new $related();
 
         $localKey = $localKey ?: $this->getKeyName();

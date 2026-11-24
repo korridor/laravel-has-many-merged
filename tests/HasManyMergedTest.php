@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Korridor\LaravelHasManyMerged\Tests;
 
 use Illuminate\Database\Eloquent\Builder;
+use InvalidArgumentException;
 use Korridor\LaravelHasManyMerged\HasManyMerged;
 use Korridor\LaravelHasManyMerged\Tests\Models\Message;
 use Korridor\LaravelHasManyMerged\Tests\Models\User;
@@ -276,5 +277,30 @@ class HasManyMergedTest extends TestCase
         // Assert
         $this->assertSame([0, 1, 2], $user1->messages->keys()->all());
         $this->assertTrue(array_is_list($user1->messages->toArray()));
+    }
+
+    public function testHasManyMergedWithoutForeignKeysThrowsException(): void
+    {
+        // Arrange
+        $this->createTwoUsersWereBothAreSenderOrReceiverOfTheSameFourMessages();
+        $user = User::query()->findOrFail(11);
+
+        // Assert
+        $this->expectException(InvalidArgumentException::class);
+
+        // Act
+        $user->hasManyMerged(Message::class, [], 'other_unique_id');
+    }
+
+    public function testHasManyMergedWithNullForeignKeysThrowsException(): void
+    {
+        // Arrange
+        $user = new User();
+
+        // Assert
+        $this->expectException(InvalidArgumentException::class);
+
+        // Act
+        $user->hasManyMerged(Message::class);
     }
 }
