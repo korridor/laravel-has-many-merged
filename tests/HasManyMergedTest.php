@@ -303,4 +303,35 @@ class HasManyMergedTest extends TestCase
         // Act
         $user->hasManyMerged(Message::class);
     }
+
+    public function testEagerLoadingIgnoresRelatedModelsWithNullForeignKey(): void
+    {
+        // Arrange
+        $this->createTwoUsersWereBothAreSenderOrReceiverOfTheSameFourMessages();
+        Message::query()->create([
+            'id' => 5,
+            'content' => 'E - This is a message without receiver!',
+            'sender_user_id' => 1,
+            'receiver_user_id' => null,
+            'content_integer' => 1,
+        ]);
+
+        // Act
+        $users = User::with(['messages'])->get();
+        $user1 = $users->firstWhere('id', 11);
+        $user2 = $users->firstWhere('id', 12);
+
+        // Assert
+        $this->assertSame([1, 2, 3, 5], $user1->messages->pluck('id')->sort()->values()->all());
+        $this->assertSame([2, 3, 4], $user2->messages->pluck('id')->sort()->values()->all());
+    }
+
+    public function testHasManyMergedConstructorWithoutForeignKeysThrowsException(): void
+    {
+        // Assert
+        $this->expectException(InvalidArgumentException::class);
+
+        // Act
+        new HasManyMerged(Message::query(), new User(), [], 'other_unique_id');
+    }
 }

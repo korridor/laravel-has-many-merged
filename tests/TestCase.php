@@ -38,7 +38,7 @@ abstract class TestCase extends PHPUnitTestCase
             $table->text('content');
             $table->integer('content_integer')->default(0);
             $table->unsignedInteger('sender_user_id');
-            $table->unsignedInteger('receiver_user_id');
+            $table->unsignedInteger('receiver_user_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
