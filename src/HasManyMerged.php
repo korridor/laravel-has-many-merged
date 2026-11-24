@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use InvalidArgumentException;
 
 /**
  * @template TRelatedModel of Model
@@ -41,6 +42,11 @@ class HasManyMerged extends Relation
      */
     public function __construct(Builder $query, Model $parent, array $foreignKeys, string $localKey)
     {
+        if ($foreignKeys === []) {
+            // Without foreign keys the constraint closure is empty and the query would return every row.
+            throw new InvalidArgumentException('HasManyMerged requires at least one foreign key.');
+        }
+
         $this->foreignKeys = $foreignKeys;
         $this->localKey = $localKey;
 
