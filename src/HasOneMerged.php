@@ -53,7 +53,7 @@ class HasOneMerged extends HasOneOrManyMerged
      * The first one of many subquery.
      * Info: From CanBeOneOfMany trait.
      *
-     * @var Builder<TRelatedModel>|null
+     * @var Builder<*>|null
      */
     protected $oneOfManySubQuery;
 
@@ -61,7 +61,7 @@ class HasOneMerged extends HasOneOrManyMerged
      * One query per foreign key and one of many subquery, used to build the union of all foreign keys.
      * The relationship constraints are added to these queries.
      *
-     * @var list<array{query: Builder<TRelatedModel>, foreignKey: string}>
+     * @var list<array{query: Builder<*>, foreignKey: string}>
      */
     protected $oneOfManyForeignKeyQueries = [];
 
@@ -146,12 +146,12 @@ class HasOneMerged extends HasOneOrManyMerged
     public function get($columns = ['*'])
     {
         if (! $this->isOneOfMany) {
-            return $this->query->get($columns);
+            return parent::get($columns);
         }
 
         $this->addOneOfManyKeySelect();
 
-        $results = $this->query->get($columns);
+        $results = parent::get($columns);
 
         foreach ($results as $result) {
             $this->extractOneOfManyKey($result);
@@ -272,7 +272,7 @@ class HasOneMerged extends HasOneOrManyMerged
      * Info: From CanBeOneOfMany trait.
      *
      * @param  string|array<string, string>  $column
-     * @param  string|Closure(Builder<TRelatedModel>): mixed  $aggregate
+     * @param  string|Closure(Builder<*>): mixed  $aggregate
      * @param  string|null  $relation
      * @return $this
      *
@@ -399,7 +399,7 @@ class HasOneMerged extends HasOneOrManyMerged
      * Get the first one of many subquery.
      * Info: From CanBeOneOfMany trait.
      *
-     * @return Builder<TRelatedModel>|null
+     * @return Builder<*>|null
      */
     public function getOneOfManySubQuery()
     {
@@ -428,7 +428,7 @@ class HasOneMerged extends HasOneOrManyMerged
      *
      * @param  string[]  $columns
      * @param  string  $aggregate
-     * @return Builder<TRelatedModel>
+     * @return Builder<*>
      */
     protected function newOneOfManySubQuery(array $columns, string $aggregate): Builder
     {
@@ -487,8 +487,8 @@ class HasOneMerged extends HasOneOrManyMerged
      * Add the join subquery to the given query on the given columns.
      * Note: Similar to addOneOfManyJoinSubQuery of CanBeOneOfMany trait.
      *
-     * @param  Builder<TRelatedModel>  $parent
-     * @param  Builder<TRelatedModel>  $subQuery
+     * @param  Builder<*>  $parent
+     * @param  Builder<*>  $subQuery
      * @param  string[]  $on
      * @param  bool  $joinOnKey  Whether the parent query also has the ONE_OF_MANY_KEY column (true for subqueries)
      * @return void
@@ -559,7 +559,7 @@ class HasOneMerged extends HasOneOrManyMerged
     /**
      * Get a new query for the related model.
      *
-     * @return Builder<TRelatedModel>
+     * @return Builder<*>
      */
     protected function newRelatedQuery(): Builder
     {
