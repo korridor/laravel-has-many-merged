@@ -68,7 +68,7 @@ class HasOneMerged extends HasOneOrManyMerged
     /**
      * The value of the matched foreign key for every one of many result.
      *
-     * @var WeakMap<Model, mixed>|null
+     * @var WeakMap<object, mixed>|null
      */
     protected $oneOfManyKeys;
 
@@ -172,11 +172,10 @@ class HasOneMerged extends HasOneOrManyMerged
         $keyColumn = $this->qualifySubSelectColumn(self::ONE_OF_MANY_KEY);
         $selectedColumns = $this->query->getQuery()->columns;
 
-        if ($selectedColumns === null) {
-            $this->query->select([$this->related->qualifyColumn('*')]);
-        }
-
-        if ($selectedColumns === null || ! in_array($keyColumn, $selectedColumns, true)) {
+        // An unqualified * would also select the columns of the joined one of many subquery.
+        if ($selectedColumns === null || $selectedColumns === ['*']) {
+            $this->query->select([$this->related->qualifyColumn('*'), $keyColumn]);
+        } elseif (! in_array($keyColumn, $selectedColumns, true)) {
             $this->query->addSelect($keyColumn);
         }
     }
@@ -193,7 +192,7 @@ class HasOneMerged extends HasOneOrManyMerged
 
         if (array_key_exists(self::ONE_OF_MANY_KEY, $attributes)) {
             $this->oneOfManyKeys ??= new WeakMap();
-            $this->oneOfManyKeys[$result] = $attributes[self::ONE_OF_MANY_KEY];
+            $this->oneOfManyKeys->offsetSet($result, $attributes[self::ONE_OF_MANY_KEY]);
             unset($attributes[self::ONE_OF_MANY_KEY]);
             $result->setRawAttributes($attributes, true);
         }
@@ -306,7 +305,9 @@ class HasOneMerged extends HasOneOrManyMerged
 
         foreach ($columns as $currentColumn => $currentAggregate) {
             if (! in_array(strtolower($currentAggregate), ['min', 'max'], true)) {
-                throw new InvalidArgumentException("Invalid aggregate [{$currentAggregate}] used within ofMany relation. Available aggregates: MIN, MAX");
+                throw new InvalidArgumentException(
+                    "Invalid aggregate [{$currentAggregate}] used within ofMany relation. Available aggregates: MIN, MAX"
+                );
             }
 
             $onColumns = array_merge([$currentColumn], $previous['columns'] ?? []);

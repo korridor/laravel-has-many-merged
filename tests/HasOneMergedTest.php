@@ -646,4 +646,52 @@ class HasOneMergedTest extends TestCase
         // Act
         $user->hasOneMerged(Message::class, ['sender_user_id', 'receiver_user_id'], 'other_unique_id')->ofMany('id', 'avg');
     }
+
+    public function testOfManyWithSelectAllInConstrainedEagerLoadingOnlySelectsTheRelatedColumns(): void
+    {
+        // Arrange
+        $this->createTwoUsersWereBothAreSenderOrReceiverOfTheSameFourMessages();
+
+        // Act
+        $users = User::with([
+            'latestCreatedMessageOfMany' => function (HasOneMerged $query): void {
+                $query->select('*');
+            },
+        ])->orderBy('id')->get();
+
+        // Assert
+        $this->assertSame([1, 3], $users->map(fn (User $user) => $user->latestCreatedMessageOfMany?->id)->all());
+        $this->assertSame(
+            array_keys(Message::query()->findOrFail(1)->getAttributes()),
+            array_keys($users->firstOrFail()->latestCreatedMessageOfMany?->getAttributes() ?? [])
+        );
+    }
+
+    public function testOfManyRelationNameAndSubQuery(): void
+    {
+        // Arrange
+        $this->createTwoUsersWereBothAreSenderOrReceiverOfTheSameFourMessages();
+        $user = User::query()->findOrFail(12);
+
+        // Act
+        $plainRelation = $user->latestMessage();
+        $guessedRelation = $user->latestMessageOfMany();
+        $namedRelation = $user->hasOneMerged(Message::class, ['sender_user_id', 'receiver_user_id'], 'other_unique_id')
+            ->latestOfMany('created_at', 'custom_alias');
+        $closureRelation = (function () use ($user): HasOneMerged {
+            return $user->hasOneMerged(Message::class, ['sender_user_id', 'receiver_user_id'], 'other_unique_id')
+                ->ofMany('created_at');
+        })();
+
+        // Assert
+        $this->assertFalse($plainRelation->isOneOfMany());
+        $this->assertNull($plainRelation->getOneOfManySubQuery());
+        $this->assertTrue($guessedRelation->isOneOfMany());
+        $this->assertSame('latestOfMany', $guessedRelation->getRelationName());
+        $this->assertInstanceOf(Builder::class, $guessedRelation->getOneOfManySubQuery());
+        $this->assertSame('custom_alias', $namedRelation->getRelationName());
+        $this->assertSame(3, $namedRelation->getResults()?->id);
+        $this->assertSame('messages_of_many', $closureRelation->getRelationName());
+        $this->assertSame(3, $closureRelation->getResults()?->id);
+    }
 }
