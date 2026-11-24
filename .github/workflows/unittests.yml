@@ -1,12 +1,16 @@
 name: Unit Test
 
-on: [ push ]
+on:
+  push:
+  pull_request:
 
 permissions:
   contents: read
 
 jobs:
   PHPUnit:
+    # Same-repo PRs are already covered by the push run; only run PR events for forks.
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
     strategy:
       matrix:
         include:
